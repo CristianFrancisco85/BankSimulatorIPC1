@@ -4,12 +4,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
@@ -18,6 +21,7 @@ import javax.swing.JTabbedPane;
  *
  * @author cristianmeono
  */
+
 public  class AdminModule {
     
     public JInternalFrame AdminFrame = new JInternalFrame("Modulo de Administracion",true,true,false,true);
@@ -48,7 +52,7 @@ public  class AdminModule {
     }
     
     
-    class ClientePanel extends JPanel{
+    class ClientePanel extends JPanel implements ActionListener {
         
         JButton okBtn = new JButton();
        
@@ -66,8 +70,8 @@ public  class AdminModule {
         JFormattedTextField idCliente = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreCliente = new JFormattedTextField(new String(""));
         JFormattedTextField direccionCliente = new JFormattedTextField(new String(""));
-        JFormattedTextField telefonoCliente = new JFormattedTextField();
-        JFormattedTextField ctcahorroCliente = new JFormattedTextField();
+        JFormattedTextField telefonoCliente = new JFormattedTextField(new Integer(1));
+        JFormattedTextField ctsahorroCliente = new JFormattedTextField();
         JFormattedTextField ctsmonetariasCliente = new JFormattedTextField();
         JFormattedTextField prestamosCliente = new JFormattedTextField();
         JFormattedTextField tjtcreditoCliente = new JFormattedTextField();
@@ -80,7 +84,9 @@ public  class AdminModule {
         
         
         ButtonGroup GroupRbtn = new ButtonGroup();
-        
+        // Vector auxiliar
+        String [] auxVector = new String[9];
+        Data DataCollector = new Data ();
         
         ClientePanel(){
             
@@ -200,8 +206,8 @@ public  class AdminModule {
             
             Const.gridx=2;
             Const.gridy=5;
-            ctcahorroCliente.setPreferredSize(new Dimension(200,20));
-            this.add(ctcahorroCliente, Const);
+            ctsahorroCliente.setPreferredSize(new Dimension(200,20));
+            this.add(ctsahorroCliente, Const);
             
             Const.gridx=2;
             Const.gridy=6;
@@ -227,16 +233,117 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=12;
             okBtn.setText("OK");
-            this.add(okBtn,Const);
-           
+            okBtn.addActionListener(this);
+            this.add(okBtn,Const);           
+                       
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e){
             
+            if(delRbtn.isSelected()){
+                
+               if(Data.checkPK(idCliente.getText(), Data.ClientesMtx, Data.ClientesMtxCounter)){
+                    Data.ClientesMtx=Data.delReg(idCliente.getText(),Data.ClientesMtx,Data.ClientesMtxCounter);
+                    Data.ClientesMtxCounter--;                 
+                }
+               else{
+                   JOptionPane.showMessageDialog(null,"ID no existe", "Error", JOptionPane.ERROR_MESSAGE);
+               }
+               
+                            
+               Data.printMtx(Data.ClientesMtx);
+                
+            }
+            else if(addRbtn.isSelected()){
+                
+                auxVector[0] = idCliente.getText();
+                auxVector[1] = nombreCliente.getText();
+                auxVector[2] = direccionCliente.getText();
+                auxVector[3] = telefonoCliente.getText();
+                auxVector[4] = ctsahorroCliente.getText();
+                auxVector[5] = ctsmonetariasCliente.getText();
+                auxVector[6] = prestamosCliente.getText();
+                auxVector[7] = tjtcreditoCliente.getText();
+                auxVector[8] = transaccionesCliente.getText();
+                
+                Data.addReg(auxVector, Data.ClientesMtx, Data.ClientesMtxCounter); 
+                
+                if(!Data.checkPK(idCliente.getText(), Data.ClientesMtx, Data.ClientesMtxCounter)){
+                    Data.ClientesMtxCounter++;   
+                }
+                
+                Data.printMtx(Data.ClientesMtx);
+                
+            }
+            else if(editRbtn.isSelected()){
+                
+                auxVector[0] = idCliente.getText();
+                auxVector[1] = nombreCliente.getText();
+                auxVector[2] = direccionCliente.getText();
+                auxVector[3] = telefonoCliente.getText();
+                auxVector[4] = ctsahorroCliente.getText();
+                auxVector[5] = ctsmonetariasCliente.getText();
+                auxVector[6] = prestamosCliente.getText();
+                auxVector[7] = tjtcreditoCliente.getText();
+                auxVector[8] = transaccionesCliente.getText();
+                Data.ClientesMtx=Data.editReg(idCliente.getText(),auxVector,Data.ClientesMtx,Data.ClientesMtxCounter);
+                
+                
+            }
+            else if(readRbtn.isSelected()){
+                
+                auxVector=Data.readReg(idCliente.getText(),Data.ClientesMtx,Data.ClientesMtxCounter);
+                idCliente.setText(auxVector[0]);
+                nombreCliente.setText(auxVector[1]);
+                direccionCliente.setText(auxVector[2]);
+                telefonoCliente.setText(auxVector[3]);
+                ctsahorroCliente.setText(auxVector[4]);
+                ctsmonetariasCliente.setText(auxVector[5]);
+                prestamosCliente.setText(auxVector[6]);
+                tjtcreditoCliente.setText(auxVector[7]);
+                transaccionesCliente.setText(auxVector[8]);             
+                               
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
+            }
             
         }
         
+        // Habilita campos
+        public void enabledFields(){
+            
+        idCliente.setEnabled(true);
+        nombreCliente.setEnabled(true);
+        direccionCliente.setEnabled(true);
+        telefono.setEnabled(true);
+        ctsahorroCliente.setEnabled(true);
+        ctsmonetariasCliente.setEnabled(true);
+        prestamosCliente.setEnabled(true);
+        tjtcreditoCliente.setEnabled(true);
+        transaccionesCliente.setEnabled(true);
+        
+        }
+        
+        //Deshabilita Campos
+        public void disabledFields(){
+            
+        idCliente.setEnabled(true);
+        nombreCliente.setEnabled(false);
+        direccionCliente.setEnabled(false);
+        telefono.setEnabled(false);
+        ctsahorroCliente.setEnabled(false);
+        ctsmonetariasCliente.setEnabled(false);
+        prestamosCliente.setEnabled(false);
+        tjtcreditoCliente.setEnabled(false);
+        transaccionesCliente.setEnabled(false);
+            
+        }
         
     }
     
-    class AgenciaPanel extends JPanel{
+    class AgenciaPanel extends JPanel implements ActionListener{
                   
         JButton okBtn = new JButton();
        
@@ -252,7 +359,7 @@ public  class AdminModule {
         JFormattedTextField idAgencia = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreAgencia = new JFormattedTextField(new String(""));
         JFormattedTextField direccionAgencia = new JFormattedTextField(new String(""));
-        JFormattedTextField telefonoAgencia = new JFormattedTextField();
+        JFormattedTextField telefonoAgencia = new JFormattedTextField(new Integer(0));
         JFormattedTextField numcajasAgencia = new JFormattedTextField();
         JFormattedTextField numescritoriosAgencia = new JFormattedTextField();
         JFormattedTextField efectivoAgencia = new JFormattedTextField();
@@ -263,6 +370,7 @@ public  class AdminModule {
         JRadioButton readRbtn = new JRadioButton();      
         
         ButtonGroup GroupRbtn = new ButtonGroup();
+        String [] auxVector = new String[7];
         
         AgenciaPanel(){
             this.setLayout(new GridBagLayout());
@@ -386,12 +494,83 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=12;
             okBtn.setText("OK");
+            okBtn.addActionListener(this);
             this.add(okBtn,Const);
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            
+            if(delRbtn.isSelected()){
+                
+               if(Data.checkPK(idAgencia.getText(), Data.AgenciasMtx, Data.AgenciasMtxCounter)){
+                    Data.AgenciasMtx=Data.delReg(idAgencia.getText(),Data.AgenciasMtx,Data.AgenciasMtxCounter);
+                    Data.AgenciasMtxCounter--;   
+                }   
+               else{
+                   JOptionPane.showMessageDialog(null,"ID no existe", "Error", JOptionPane.ERROR_MESSAGE);
+               }
+               
+                            
+               Data.printMtx(Data.AgenciasMtx);
+                
+            }
+            else if(addRbtn.isSelected()){
+                
+                auxVector[0] = idAgencia.getText();
+                auxVector[1] = nombreAgencia.getText();
+                auxVector[2] = direccionAgencia.getText();
+                auxVector[3] = telefonoAgencia.getText();
+                auxVector[4] = numcajasAgencia.getText();
+                auxVector[5] = numescritoriosAgencia.getText();
+                auxVector[6] = efectivoAgencia.getText();
+                
+                Data.addReg(auxVector, Data.AgenciasMtx, Data.AgenciasMtxCounter); 
+                
+                if(!Data.checkPK(idAgencia.getText(), Data.AgenciasMtx, Data.AgenciasMtxCounter)){
+                    Data.AgenciasMtxCounter++;   
+                }
+                
+                Data.printMtx(Data.AgenciasMtx);
+                
+            }
+            else if(editRbtn.isSelected()){
+                
+                auxVector[0] = idAgencia.getText();
+                auxVector[1] = nombreAgencia.getText();
+                auxVector[2] = direccionAgencia.getText();
+                auxVector[3] = telefonoAgencia.getText();
+                auxVector[4] = numcajasAgencia.getText();
+                auxVector[5] = numescritoriosAgencia.getText();
+                auxVector[6] = efectivoAgencia.getText();
+                Data.AgenciasMtx=Data.editReg(idAgencia.getText(),auxVector,Data.AgenciasMtx,Data.AgenciasMtxCounter);
+                
+                
+            }
+            else if(readRbtn.isSelected()){
+                
+                auxVector=Data.readReg(idAgencia.getText(),Data.AgenciasMtx,Data.AgenciasMtxCounter);
+                idAgencia.setText(auxVector[0]);
+                nombreAgencia.setText(auxVector[1]);
+                direccionAgencia.setText(auxVector[2]);
+                telefonoAgencia.setText(auxVector[3]);
+                numcajasAgencia.setText(auxVector[4]);
+                numescritoriosAgencia.setText(auxVector[5]);
+                efectivoAgencia.setText(auxVector[6]);                             
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            
+            
+        }
+        
         
     }
     
-    class AgenciaAutoPanel extends JPanel{
+    class AgenciaAutoPanel extends JPanel implements ActionListener{
         
         JButton okBtn = new JButton();
        
@@ -420,6 +599,7 @@ public  class AdminModule {
         JRadioButton readRbtn = new JRadioButton();      
         
         ButtonGroup GroupRbtn = new ButtonGroup();
+        String[]auxVector = new String[8];
         
         AgenciaAutoPanel(){
             this.setLayout(new GridBagLayout());
@@ -553,13 +733,81 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=12;
             okBtn.setText("OK");
+            okBtn.addActionListener(this);
             this.add(okBtn,Const);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            if(delRbtn.isSelected()){
+                
+               if(Data.checkPK(idAgencia.getText(), Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter)){
+                    Data.AgenciasAutoMtx=Data.delReg(idAgencia.getText(),Data.AgenciasAutoMtx,Data.AgenciasAutoMtxCounter);
+                    Data.AgenciasAutoMtxCounter--;   
+                }  
+               else{
+                   JOptionPane.showMessageDialog(null,"ID no existe", "Error", JOptionPane.ERROR_MESSAGE);
+               }
+               
+                            
+               Data.printMtx(Data.AgenciasAutoMtx);
+                
+            }
+            else if(addRbtn.isSelected()){
+                
+                auxVector[0] = idAgencia.getText();
+                auxVector[1] = nombreAgencia.getText();
+                auxVector[2] = direccionAgencia.getText();
+                auxVector[3] = telefonoAgencia.getText();
+                auxVector[4] = numcajasAgencia.getText();
+                auxVector[5] = numescritoriosAgencia.getText();
+                auxVector[6] = efectivoAgencia.getText();
+                auxVector[7] = numautoAgencia.getText();
+                
+                Data.addReg(auxVector, Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter); 
+                
+                if(!Data.checkPK(idAgencia.getText(), Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter)){
+                    Data.AgenciasAutoMtxCounter++;   
+                }
+                
+                Data.printMtx(Data.AgenciasAutoMtx);
+                
+            }
+            else if(editRbtn.isSelected()){
+                
+                auxVector[0] = idAgencia.getText();
+                auxVector[1] = nombreAgencia.getText();
+                auxVector[2] = direccionAgencia.getText();
+                auxVector[3] = telefonoAgencia.getText();
+                auxVector[4] = numcajasAgencia.getText();
+                auxVector[5] = numescritoriosAgencia.getText();
+                auxVector[6] = efectivoAgencia.getText();
+                auxVector[7] = numautoAgencia.getText();
+                Data.AgenciasAutoMtx=Data.editReg(idAgencia.getText(),auxVector,Data.AgenciasAutoMtx,Data.AgenciasAutoMtxCounter);                              
+            }
+            else if(readRbtn.isSelected()){
+                
+                auxVector=Data.readReg(idAgencia.getText(),Data.AgenciasAutoMtx,Data.AgenciasAutoMtxCounter);
+                idAgencia.setText(auxVector[0]);
+                nombreAgencia.setText(auxVector[1]);
+                direccionAgencia.setText(auxVector[2]);
+                telefonoAgencia.setText(auxVector[3]);
+                numcajasAgencia.setText(auxVector[4]);
+                numescritoriosAgencia.setText(auxVector[5]);
+                efectivoAgencia.setText(auxVector[6]); 
+                numautoAgencia.setText(auxVector[7]);
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Selecciones un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
         }
         
         
     }
     
-    class CajeroPanel extends JPanel{
+    class CajeroPanel extends JPanel implements ActionListener{
         
         JButton okBtn = new JButton();
        
@@ -582,6 +830,7 @@ public  class AdminModule {
         JRadioButton readRbtn = new JRadioButton();      
         
         ButtonGroup GroupRbtn = new ButtonGroup();
+        String [] auxVector = new String[5];
         
         CajeroPanel(){
             
@@ -686,7 +935,65 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=12;
             okBtn.setText("OK");
+            okBtn.addActionListener(this);
             this.add(okBtn,Const);
+            
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+           if(delRbtn.isSelected()){
+                            
+               if(Data.checkPK(idCajero.getText(), Data.CajerosMtx, Data.CajerosMtxCounter)){
+                    Data.CajerosMtx=Data.delReg(idCajero.getText(),Data.CajerosMtx,Data.CajerosMtxCounter);
+                    Data.CajerosMtxCounter--;   
+                }
+               else{
+                   JOptionPane.showMessageDialog(null,"ID no existe", "Error", JOptionPane.ERROR_MESSAGE);
+               }
+                            
+               Data.printMtx(Data.CajerosMtx);
+                
+            }
+           else if(addRbtn.isSelected()){
+                
+                auxVector[0] = idCajero.getText();
+                auxVector[1] = ubicacionCajero.getText();
+                auxVector[2] = efectivoCajero.getText();
+                auxVector[3] = estadoCajero.getText();
+                auxVector[4] = numtransCajero.getText();
+                
+                Data.addReg(auxVector, Data.CajerosMtx, Data.CajerosMtxCounter); 
+                
+                if(!Data.checkPK(idCajero.getText(), Data.CajerosMtx, Data.CajerosMtxCounter)){
+                    Data.CajerosMtxCounter++;   
+                }
+                
+                Data.printMtx(Data.CajerosMtx);
+                
+            }
+           else if(editRbtn.isSelected()){
+                
+                auxVector[0] = idCajero.getText();
+                auxVector[1] = ubicacionCajero.getText();
+                auxVector[2] = efectivoCajero.getText();
+                auxVector[3] = estadoCajero.getText();
+                auxVector[4] = numtransCajero.getText();
+                Data.CajerosMtx=Data.editReg(idCajero.getText(),auxVector,Data.CajerosMtx,Data.CajerosMtxCounter);                              
+            }
+           else if(readRbtn.isSelected()){
+                
+                auxVector=Data.readReg(idCajero.getText(),Data.CajerosMtx,Data.CajerosMtxCounter);
+                idCajero.setText(auxVector[0]);
+                ubicacionCajero.setText(auxVector[1]);
+                efectivoCajero.setText(auxVector[2]);
+                estadoCajero.setText(auxVector[3]);
+                numtransCajero.setText(auxVector[4]);
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Selecciones un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
+            } 
             
         }
         
@@ -703,5 +1010,7 @@ public  class AdminModule {
     class EmpleadosPanel extends JPanel{
         
     }
+    
+    
     
 }
