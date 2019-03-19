@@ -13,19 +13,19 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author cristianmeono
+ * @author Cristian Meoño 201801397
  */
 public class MainFrame extends JFrame  {
     
     Container ContentPane = getContentPane();
     JPanel SideMenu = new JPanel();
-    JButton adminBtn,transBtn,reportBtn = new JButton();
+    JButton adminBtn,transBtn,reportBtn;
     AdminModule Administrator = new AdminModule();
     TransactionModule Transaction = new TransactionModule();
     ReportsModule Reports = new ReportsModule();
     
     MainFrame(){
-        
+        //Configuracion de MainFrame
         this.setSize(1100,650);
         this.setTitle("Banco del Exterior - Main System");
         this.setLocationRelativeTo(null);
@@ -33,34 +33,38 @@ public class MainFrame extends JFrame  {
         ContentPane.setLayout(new BorderLayout());
         ContentPane.setBackground(new java.awt.Color(238, 238, 238));
         ContentPane.add(SideMenu, BorderLayout.WEST);
-        
+
         SideMenu.setBackground(new java.awt.Color(19, 137, 223));
         SideMenu.setVisible(true);
         SideMenu.setLayout(new GridLayout(10,0,0,8));
         SideMenu.setBorder(BorderFactory.createLineBorder(Color.BLACK,1, true));
         
+        //Configuracion Boton "Administador"
         adminBtn = this.newBtn("Administrador");
         adminBtn.setToolTipText("Administracion del Sistema");
         adminBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/admin.png")));
         adminBtn.addActionListener(new AdminBtn());
         SideMenu.add(adminBtn); 
         
+        //Configuracion Boton "Transacciones"
         transBtn = this.newBtn("Transacciones");
         transBtn.setToolTipText("Realizar Transacciones");
         transBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/transaction.png")));
         transBtn.addActionListener(new TransBtn());
         SideMenu.add(transBtn); 
         
+        //Configuracion Boton "Reportes"
         reportBtn = this.newBtn("Reportes");
         reportBtn.setToolTipText("Creacion de Reportes");
         reportBtn.addActionListener(new ReportBtn());
         SideMenu.add(reportBtn);
         
-        this.setVisible(true);       
+        this.setVisible(true);   
         
     }
     
     public JButton newBtn(String text){
+        //Configuracion de
         JButton btn = new JButton();
         btn.setText(text);
         btn.setOpaque(true);
@@ -75,25 +79,20 @@ public class MainFrame extends JFrame  {
             
         }
         );
-        
-        
-                              
+                                   
         return btn;
     }
     
     class AdminBtn implements ActionListener {
         public void actionPerformed(ActionEvent e){
+            
         ContentPane.add(Administrator.AdminFrame, BorderLayout.CENTER);
-        Administrator.AdminFrame.show();
-        
+        Administrator.AdminFrame.show();        
         reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
-        if(Reports.ReportFrame.isClosed()){
-           Reports.ReportFrame.dispose();
-        }
-        if(Transaction.TransactionFrame.isClosed()){
-            Transaction.TransactionFrame.dispose();
-        }
+        
+        Reports.ReportFrame.dispose();
+        Transaction.TransactionFrame.dispose();
         
         ContentPane.revalidate();
         ContentPane.repaint();      
@@ -107,13 +106,8 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         reportBtn.setBackground(new java.awt.Color(17, 120, 204));
-        if(Administrator.AdminFrame.isClosed()){
-           Administrator.AdminFrame.dispose();
-        }
-        if(Reports.ReportFrame.isClosed()){
-           Reports.ReportFrame.dispose();
-        }
-        
+        Reports.ReportFrame.dispose();
+        Administrator.AdminFrame.dispose();
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }
@@ -126,13 +120,8 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
-        if(Administrator.AdminFrame.isClosed()){
-           Administrator.AdminFrame.dispose();
-        }
-        if(Transaction.TransactionFrame.isClosed()){
-            Transaction.TransactionFrame.dispose();
-        }
-        
+        Transaction.TransactionFrame.dispose();
+        Administrator.AdminFrame.dispose();       
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }

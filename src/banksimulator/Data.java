@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author cristianmeono
+ * @author Cristian Meoño 201801397
  */
 
 
@@ -14,15 +14,24 @@ public class Data {
     static String [][] ClientesMtx = new String[50][9];
     static int ClientesMtxCounter=0;
     
-    static String [][] AgenciasMtx = new String[50][7];
+    static String [][] AgenciasMtx = new String[50][8];
     static int AgenciasMtxCounter=0;
     
-    static String [][] AgenciasAutoMtx = new String[50][8];
+    static String [][] AgenciasAutoMtx = new String[50][9];
     static int AgenciasAutoMtxCounter=0;
     
     static String [][] CajerosMtx =  new String[50][5];
-    static int CajerosMtxCounter =0;
+    static int CajerosMtxCounter=0;
     
+    static String [][] cAhorroMtx =  new String [50][4];
+    static int cAhorroMtxCounter=0;
+    
+    static String [][] cMonetariaMtx =  new String [50][4];
+    static int cMonetariaMtxCounter=0;
+    
+    static String [][] DepositosMtx =  new String [50][4];
+    static int DepositosMtxCounter=0;
+     
     
     /**
      *
@@ -143,6 +152,13 @@ public class Data {
         
     }
     
+    /**
+     *
+     * @param ID : ID a buscar
+     * @param RegMtx : Matriz en donde se buscara
+     * @param Counter : Contador donde de la matriz 
+     * @return False: Si no existe True: Si existe
+     */
     public static boolean checkPK(String ID, String [][] RegMtx, int Counter){
         
         for(int i=0; i<Counter;i++){
@@ -155,6 +171,10 @@ public class Data {
         
     }
      
+    /**
+     *
+     * @param RegMtx Matriz de la cual se imprimiran 5 lineas
+     */
     public static void printMtx(String [][] RegMtx) {
         
         for(int i=0; i<RegMtx[0].length;i++){   
@@ -182,5 +202,168 @@ public class Data {
         System.out.println("");
     }
     
+    /**
+     *
+     * @param array Matriz de donde se sacara la columna
+     * @param index Indice de la columna que se sacara (Begin:0)
+     * @param counter Contador de la matriz 
+     * @return
+     */
+    public static String[] getColumn(String[][] array, int index,int counter){
+    String[] column = new String[counter];
+    
+    for(int i=0; i<counter; i++){
+       column[i] = array[i][index];
+    }
+    
+    for(int i=0; i<counter; i++){
+       System.err.println(column[i]);
+    }
+    
+    return column;
+    }
+    
+    /**
+     *
+     * @param ID ID a buscar - Establece Fila
+     * @param newValue Valor nuevo a insertar
+     * @param RegMtx Matriz donde se buscara
+     * @param Counter Contador de la matriz
+     * @param columna Indice de columna donde se insertara - Establece Columna 
+     */
+    public static void addValueIn (String ID, String newValue, String [][] RegMtx, int Counter, int columna){
+        
+       if(!Data.checkPK(ID, RegMtx, Counter)){   
+            JOptionPane.showMessageDialog(null,"ID no existe", "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+       
+       for(int i=0; i<Counter;i++){
+            
+            if( ID.equals(RegMtx[i][0])){
+                    
+               RegMtx[i][columna]= RegMtx[i][columna]+newValue+",";
+               break;
+            }
+        }
+        
+        
+        
+    }
+    
+    /**
+     *
+     * @param ID ID de Agencia
+     * @param Type Tipo de Agencia - TypeA:Agencia - TypeB:AgenciaAutoBanco
+     */
+    public static void increaseTransac (String ID,String Type){
+        
+        switch(Type){
+            case "TypeA":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasMtx[i][0])){
+                       Data.AgenciasMtx[i][7]=Integer.toString(Integer.parseInt(Data.AgenciasMtx[i][7])+1);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeB":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasAutoMtx[i][0])){
+                       Data.AgenciasAutoMtx[i][8]=Integer.toString(Integer.parseInt(Data.AgenciasAutoMtx[i][8])+1);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeC":
+                for(int i=0; i<Data.ClientesMtxCounter;i++){
+            
+                    if( ID.equals(Data.ClientesMtx[i][0])){
+
+                       Data.ClientesMtx[i][8]=Integer.toString(Integer.parseInt(Data.ClientesMtx[i][8])+1);
+                       break;
+                    }
+                }
+                               
+                break;
+            default:
+                
+            
+        }
+        
+    }
+    
+    /**
+     *
+     * @param ID: ID de cliente
+     * @param Type : Tipo de consulta - TypeAH:Cuentas de Ahorro - TypeM:Cuentas Monetarias - TypeP:Prestamos
+     * @return Retorna un vector donde cada espacio es un elemento
+     */
+    public static String[] getIDs(String ID,String Type){
+        
+        String[] IDs = null;
+        
+        switch(Type){
+            case"TypeAH":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.ClientesMtx[i][0])){
+                        
+                       IDs = Data.ClientesMtx[i][4].split(",");
+                       break;
+                    }
+                }
+                             
+                break;
+            case "TypeM":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.ClientesMtx[i][0])){
+                        
+                       IDs = Data.ClientesMtx[i][5].split(",");
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeP":
+               for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.ClientesMtx[i][0])){
+                        
+                       IDs = Data.ClientesMtx[i][6].split(",");
+                       break;
+                    }
+                } 
+        }        
+        
+        return IDs;
+        
+    }
+    
+    /**
+     *
+     * @param ID : ID de cuenta
+     * @param Type : Tipo de Cuenta - TypeAH:Cuentas de Ahorro - TypeM:Cuentas Monetarias
+     * @return
+     */
+    public static int getSaldo(String ID,String Type){
+        int saldo=0;
+        
+        switch(Type){
+            case "TypeA":
+                break;
+            case "TypeB":
+                break;
+            case "TypeP":
+                break;
+            
+        }
+        return saldo;
+    }
     
 }

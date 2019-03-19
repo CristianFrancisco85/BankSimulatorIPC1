@@ -19,7 +19,7 @@ import javax.swing.JTabbedPane;
 
 /**
  *
- * @author cristianmeono
+ * @author Cristian Meoño 201801397
  */
 
 public  class AdminModule {
@@ -46,8 +46,7 @@ public  class AdminModule {
        //Panel 6 -- Prestamos
        TabbedPane.addTab("Prestamos", new PrestamosPanel());
        //Panel 7 -- Empleados
-       TabbedPane.addTab("Empleados", new EmpleadosPanel());
-       
+       TabbedPane.addTab("Empleados", new EmpleadosPanel());      
       
     }
     
@@ -86,7 +85,6 @@ public  class AdminModule {
         ButtonGroup GroupRbtn = new ButtonGroup();
         // Vector auxiliar
         String [] auxVector = new String[9];
-        Data DataCollector = new Data ();
         
         ClientePanel(){
             
@@ -207,26 +205,36 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=5;
             ctsahorroCliente.setPreferredSize(new Dimension(200,20));
+            ctsahorroCliente.setText("");
+            ctsahorroCliente.setEnabled(false);
             this.add(ctsahorroCliente, Const);
             
             Const.gridx=2;
             Const.gridy=6;
             ctsmonetariasCliente.setPreferredSize(new Dimension(200,20));
+            ctsmonetariasCliente.setText("");
+            ctsmonetariasCliente.setEnabled(false);
             this.add(ctsmonetariasCliente, Const);
             
             Const.gridx=2;
             Const.gridy=7;
             tjtcreditoCliente.setPreferredSize(new Dimension(200,20));
+            tjtcreditoCliente.setText("");
+            tjtcreditoCliente.setEnabled(false);
             this.add(tjtcreditoCliente, Const);
             
             Const.gridx=2;
             Const.gridy=8;
             prestamosCliente.setPreferredSize(new Dimension(200,20));
+            prestamosCliente.setText("");
+            prestamosCliente.setEnabled(false);
             this.add(prestamosCliente, Const);
             
             Const.gridx=2;
             Const.gridy=9;
             transaccionesCliente.setPreferredSize(new Dimension(200,20));
+            transaccionesCliente.setText("0");
+            transaccionesCliente.setEnabled(false);
             this.add(transaccionesCliente, Const);
             
             
@@ -355,6 +363,7 @@ public  class AdminModule {
         JLabel numcajas = new JLabel();
         JLabel numescritorios = new JLabel();
         JLabel efectivo = new JLabel();
+        JLabel transac= new JLabel();
         
         JFormattedTextField idAgencia = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreAgencia = new JFormattedTextField(new String(""));
@@ -363,6 +372,8 @@ public  class AdminModule {
         JFormattedTextField numcajasAgencia = new JFormattedTextField();
         JFormattedTextField numescritoriosAgencia = new JFormattedTextField();
         JFormattedTextField efectivoAgencia = new JFormattedTextField();
+        JFormattedTextField numtransacAgencia = new JFormattedTextField();
+        
         
         JRadioButton delRbtn = new JRadioButton();
         JRadioButton addRbtn = new JRadioButton();
@@ -370,7 +381,7 @@ public  class AdminModule {
         JRadioButton readRbtn = new JRadioButton();      
         
         ButtonGroup GroupRbtn = new ButtonGroup();
-        String [] auxVector = new String[7];
+        String [] auxVector = new String[8];
         
         AgenciaPanel(){
             this.setLayout(new GridBagLayout());
@@ -454,6 +465,11 @@ public  class AdminModule {
             efectivo.setText("Efectivo");
             this.add(efectivo,Const);           
             
+            Const.gridx=1;
+            Const.gridy=8;
+            transac.setText("Numero de Transacciones");
+            this.add(transac,Const); 
+            
             //TEXT FIELD
             
             Const.gridx=2;
@@ -489,7 +505,14 @@ public  class AdminModule {
             Const.gridx=2;
             Const.gridy=7;
             efectivoAgencia.setPreferredSize(new Dimension(200,20));
-            this.add(efectivoAgencia, Const);          
+            this.add(efectivoAgencia, Const); 
+            
+            Const.gridx=2;
+            Const.gridy=8;
+            numtransacAgencia.setPreferredSize(new Dimension(200,20));
+            numtransacAgencia.setText("0");
+            numtransacAgencia.setEnabled(false);
+            this.add(numtransacAgencia, Const);
             
             Const.gridx=2;
             Const.gridy=12;
@@ -525,8 +548,9 @@ public  class AdminModule {
                 auxVector[4] = numcajasAgencia.getText();
                 auxVector[5] = numescritoriosAgencia.getText();
                 auxVector[6] = efectivoAgencia.getText();
+                auxVector[7] = numtransacAgencia.getText();
                 
-                Data.addReg(auxVector, Data.AgenciasMtx, Data.AgenciasMtxCounter); 
+                Data.addReg(auxVector, Data.AgenciasMtx, Data.AgenciasMtxCounter);
                 
                 if(!Data.checkPK(idAgencia.getText(), Data.AgenciasMtx, Data.AgenciasMtxCounter)){
                     Data.AgenciasMtxCounter++;   
@@ -544,6 +568,7 @@ public  class AdminModule {
                 auxVector[4] = numcajasAgencia.getText();
                 auxVector[5] = numescritoriosAgencia.getText();
                 auxVector[6] = efectivoAgencia.getText();
+                auxVector[7] = numtransacAgencia.getText();;
                 Data.AgenciasMtx=Data.editReg(idAgencia.getText(),auxVector,Data.AgenciasMtx,Data.AgenciasMtxCounter);
                 
                 
@@ -557,7 +582,8 @@ public  class AdminModule {
                 telefonoAgencia.setText(auxVector[3]);
                 numcajasAgencia.setText(auxVector[4]);
                 numescritoriosAgencia.setText(auxVector[5]);
-                efectivoAgencia.setText(auxVector[6]);                             
+                efectivoAgencia.setText(auxVector[6]);
+                numtransacAgencia.setText(auxVector[7]);
             }
             else{
                 JOptionPane.showMessageDialog(null,"Seleccione un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
@@ -583,6 +609,7 @@ public  class AdminModule {
         JLabel numescritorios = new JLabel();
         JLabel efectivo = new JLabel();
         JLabel cajasauto = new JLabel();
+        JLabel transac= new JLabel();
         
         JFormattedTextField idAgencia = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreAgencia = new JFormattedTextField(new String(""));
@@ -592,6 +619,7 @@ public  class AdminModule {
         JFormattedTextField numescritoriosAgencia = new JFormattedTextField();
         JFormattedTextField efectivoAgencia = new JFormattedTextField();
         JFormattedTextField numautoAgencia =  new JFormattedTextField();
+        JFormattedTextField numtransacAgencia = new JFormattedTextField();
         
         JRadioButton delRbtn = new JRadioButton();
         JRadioButton addRbtn = new JRadioButton();
@@ -688,6 +716,11 @@ public  class AdminModule {
             cajasauto.setText("Numeros de Cajas en AutoBanco");
             this.add(cajasauto,Const); 
             
+            Const.gridx=1;
+            Const.gridy=9;
+            transac.setText("Numero de Transacciones");
+            this.add(transac,Const);
+            
             //TEXT FIELD
             
             Const.gridx=2;
@@ -729,6 +762,13 @@ public  class AdminModule {
             Const.gridy=8;
             numautoAgencia.setPreferredSize(new Dimension(200,20));
             this.add(numautoAgencia, Const);
+            
+            Const.gridx=2;
+            Const.gridy=8;
+            numtransacAgencia.setPreferredSize(new Dimension(200,20));
+            numtransacAgencia.setText("0");
+            numtransacAgencia.setEnabled(false);
+            this.add(numtransacAgencia, Const);
             
             Const.gridx=2;
             Const.gridy=12;
@@ -797,6 +837,7 @@ public  class AdminModule {
                 numescritoriosAgencia.setText(auxVector[5]);
                 efectivoAgencia.setText(auxVector[6]); 
                 numautoAgencia.setText(auxVector[7]);
+                numtransacAgencia.setText(auxVector[7]);
             }
             else{
                 JOptionPane.showMessageDialog(null,"Selecciones un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
@@ -998,6 +1039,7 @@ public  class AdminModule {
         }
         
     }
+    
     
     class TarjetaCreditoPanel extends JPanel{
         
