@@ -8,11 +8,11 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -30,7 +30,7 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author cristianmeono
+ * @author Cristian Meoño 201801397
  */
 public  class TransactionModule implements MouseListener{
     
@@ -50,6 +50,7 @@ public  class TransactionModule implements MouseListener{
        tablaClientes.setPreferredSize(new Dimension(200,200));
        tablaClientes.addMouseListener(this);
        TransactionFrame.add(tablaClientes);
+       
     }
 
     @Override
@@ -78,7 +79,7 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Deposito", new Deposito(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.addTab("Cambio de Cheques", new CambioCheques());
                     Window.TabbedPane.addTab("Pagos", new Pagos());
-                    Window.TabbedPane.addTab("Consulta", new Consulta());
+                    Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.add("Apertura Cuentas", new AbrirCts(IDPlace,IDCliente,"TypeA"));
                     Window.setVisible(true);
                 break;
@@ -91,7 +92,7 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Deposito", new Deposito(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Cambio de Cheques", new CambioCheques());
                     Window.TabbedPane.addTab("Pagos", new Pagos());
-                    Window.TabbedPane.addTab("Consulta", new Consulta());
+                    Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.add("Apertura Cuentas", new AbrirCts(IDPlace,IDCliente,"TypeB"));
                     Window.setVisible(true);
                 break;
@@ -99,8 +100,8 @@ public  class TransactionModule implements MouseListener{
                 case "Cajero Automatico":
                     IDPlace = (String) JOptionPane.showInputDialog(null,"¿De que cajero viene?","Agencias",
                     JOptionPane.DEFAULT_OPTION,null,Data.getColumn(Data.CajerosMtx,0,Data.CajerosMtxCounter),Data.CajerosMtx[0][0]);
-                    Window.TabbedPane.addTab("Retiro", new Retiro(IDPlace,IDCliente,"TypeX"));
-                    Window.TabbedPane.addTab("Consulta", new Consulta());
+                    Window.TabbedPane.addTab("Retiro", new Retiro(IDPlace,IDCliente,"TypeC"));
+                    Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeC"));
                     Window.setVisible(true);
                 break;
                 
@@ -109,19 +110,14 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Deposito", new Deposito("Single",IDCliente,"TypeX"));
                     Window.TabbedPane.addTab("Cambio de Cheques", new CambioCheques());
                     Window.TabbedPane.addTab("Pagos", new Pagos());
-                    Window.TabbedPane.addTab("Consulta", new Consulta());
+                    Window.TabbedPane.addTab("Consulta", new Consulta("Single",IDCliente,"TypeX"));
                     Window.setVisible(true);
                 break;
 
-            }
-            
+            }            
             this.TransactionFrame.revalidate();
-            this.TransactionFrame.repaint();
-              
+            this.TransactionFrame.repaint();             
         }
-        
-        
-    
     }
 
     @Override
@@ -147,26 +143,62 @@ public  class TransactionModule implements MouseListener{
     
     
     // Clase con Tabbed Pane donde cada Pestaña corresponde a una operacion permitada
-    private class TransactionsWindow extends JFrame implements ActionListener {
+    private class TransactionsWindow extends JFrame implements WindowListener {
         
         public JTabbedPane TabbedPane = new JTabbedPane();
     
         TransactionsWindow(){
             this.setSize(new Dimension(800,600));
+            this.setTitle("Ventana de Transacciones - Cliente");
             this.setLayout(new BorderLayout());
             this.setVisible(false);
-            this.setLocationRelativeTo(null);
+            //this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);            
+            this.setLocationRelativeTo(TransactionFrame);           
             this.add(TabbedPane,BorderLayout.CENTER);
-                     
+            TransactionFrame.dispose();
+            this.addWindowListener(this);
         }
         
+
         @Override
-        public void actionPerformed(ActionEvent e) {
-        
+        public void windowOpened(WindowEvent e) {
+            
         }
 
+        @Override
+        public void windowClosing(WindowEvent e) {
+           int confirm = JOptionPane.showOptionDialog(null, "¿Desea regresar al modulo de Transacciones?", "Confirmacion", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, null, null);
+            if (confirm == 0) {
+                TransactionFrame.show();
+                this.dispose();
+            }
+        }
 
-   
+        @Override
+        public void windowClosed(WindowEvent e) {
+            
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+           
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+            
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+            
+        }
+ 
     }
     
     
@@ -299,6 +331,8 @@ public  class TransactionModule implements MouseListener{
                 if(!(Data.checkPK(idCuenta.getText(),Data.cAhorroMtx,Data.cAhorroMtxCounter))){ 
                     Data.addValueIn(idCliente.getText(),idCuenta.getText(),Data.ClientesMtx,Data.ClientesMtxCounter,4);
                     Data.increaseTransac(idAgencia, typeAgencia);
+                    Data.increaseTransac(idCliente.getText(), "TypeCl");
+                    JOptionPane.showMessageDialog(null,"Apertura Exitosa", "Apertura", JOptionPane.INFORMATION_MESSAGE);
                     Data.cAhorroMtxCounter++;
                     
                 } 
@@ -314,6 +348,8 @@ public  class TransactionModule implements MouseListener{
                 if(!(Data.checkPK(idCuenta.getText(),Data.cMonetariaMtx,Data.cMonetariaMtxCounter))){  
                     Data.addValueIn(idCliente.getText(),idCuenta.getText(),Data.ClientesMtx,Data.ClientesMtxCounter,5);
                     Data.increaseTransac(idAgencia, typeAgencia);
+                    Data.increaseTransac(idCliente.getText(), "TypeCl");
+                    JOptionPane.showMessageDialog(null,"Apertura Exitosa", "Apertura", JOptionPane.INFORMATION_MESSAGE);
                     Data.cMonetariaMtxCounter++;                  
                 }
                 
@@ -326,6 +362,324 @@ public  class TransactionModule implements MouseListener{
             
         }
         
+        
+    }
+    
+    private class Retiro extends JPanel implements ActionListener,ChangeListener{
+        
+        JButton okBtn = new JButton();
+        
+        JLabel titleRbtn = new JLabel();
+        
+        JLabel idCuentaLbl = new JLabel();
+        JLabel montoLbl = new JLabel();
+        JLabel fechaLbl = new JLabel();
+        
+        JComboBox idCuenta = new JComboBox();
+        JFormattedTextField monto = new JFormattedTextField();
+        JFormattedTextField fechaAp = new JFormattedTextField();
+        
+        JRadioButton ahorroRbtn = new JRadioButton();
+        JRadioButton monetariaRbtn = new JRadioButton();
+        ButtonGroup GroupRbtn = new ButtonGroup();
+        
+        String [] auxVector= new String[3];
+        String [] idsCuentas;
+        String idAgencia,typeAgencia,idCliente;
+        
+        Retiro(String arg1,String arg2,String arg3){
+            
+            this.idAgencia=arg1;
+            this.idCliente=arg2;
+            this.typeAgencia=arg3;
+            
+            this.setLayout(new GridBagLayout());          
+            GridBagConstraints Const = new GridBagConstraints();
+            //CONSTANTES
+            //------------------
+            Const.weightx=0.0;
+            Const.weighty=0.0;
+            Const.insets = new Insets(5,5,5,5);
+            Const.anchor = GridBagConstraints.NORTHWEST;
+            //---------------
+            
+            //RADIO BUTTONS
+            GroupRbtn.add(ahorroRbtn);
+            GroupRbtn.add(monetariaRbtn); 
+            
+            Const.gridx=0;
+            Const.gridy=0;
+            titleRbtn.setText("Tipo de Cuenta:");
+            this.add(titleRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=2;
+            ahorroRbtn.setText("Ahorro");
+            ahorroRbtn.addChangeListener(this);
+            this.add(ahorroRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=3;
+            monetariaRbtn.setText("Monetaria");
+            monetariaRbtn.addChangeListener(this);
+            this.add(monetariaRbtn, Const);  
+            
+            //CAMPOS  
+            Const.insets = new Insets(5,75,5,0);
+                     
+            Const.gridx=1;
+            Const.gridy=1;
+            idCuentaLbl.setText("ID Cuenta");
+            this.add(idCuentaLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=2;
+            montoLbl.setText("Monto a Retirar");
+            this.add(montoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=3;
+            fechaLbl.setText("Fecha ");
+            this.add(fechaLbl,Const);
+            
+            //TEXT FIELD
+            
+            Const.gridx=2;
+            Const.gridy=1;
+            idCuenta.setPreferredSize(new Dimension(200,20));
+            this.add(idCuenta, Const);
+
+            Const.gridx=2;
+            Const.gridy=2;
+            monto.setPreferredSize(new Dimension(200,20));
+            this.add(monto, Const);
+            
+            Const.gridx=2;
+            Const.gridy=3;
+            fechaAp.setPreferredSize(new Dimension(200,20));
+            this.add(fechaAp, Const);
+          
+            Const.gridx=2;
+            Const.gridy=12;
+            okBtn.setText("OK");
+            okBtn.addActionListener(this);
+            this.add(okBtn,Const);
+        }
+        
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            auxVector[0]=(String)idCuenta.getSelectedItem();
+            auxVector[1]=monto.getText();
+            auxVector[2]=fechaAp.getText();
+            
+            if(ahorroRbtn.isSelected()){
+                
+                
+                if(Double.parseDouble(monto.getText()) <= Data.getSaldo((String)idCuenta.getSelectedItem(), "TypeAH" )){
+                    
+                    if(Double.parseDouble(monto.getText()) <= Data.getSaldo(idAgencia, typeAgencia)){
+                      Data.makeDebito((String)idCuenta.getSelectedItem(), "TypeAH", Double.parseDouble(monto.getText()));
+                      Data.makeDebito(idAgencia, typeAgencia, Double.parseDouble(monto.getText()));
+                      Data.addReg(auxVector, Data.RetirosMtx, Data.RetirosMtxCounter);
+                      Data.increaseTransac(idAgencia, typeAgencia);
+                      Data.increaseTransac(idCliente, "TypeCl");
+                      Data.RetirosMtxCounter++;
+                      JOptionPane.showMessageDialog(null,"Retiro Exitoso", "Retiro", JOptionPane.INFORMATION_MESSAGE); 
+                      Data.printMtx(Data.RetirosMtx);
+                    }
+                    
+                    else {
+                    JOptionPane.showMessageDialog(null,"Monto supera dinero Disponible en Agencia", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+                    
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"Monto supera dinero disponible en Cuenta", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+            }
+            else if(monetariaRbtn.isSelected()){
+                
+                if(Double.parseDouble(monto.getText()) <= Data.getSaldo((String)idCuenta.getSelectedItem(), "TypeM")){
+                    if(Double.parseDouble(monto.getText()) <= Data.getSaldo(idAgencia, typeAgencia)){
+                        Data.makeDebito((String)idCuenta.getSelectedItem(), "TypeM", Double.parseDouble(monto.getText()));
+                        Data.makeDebito(idAgencia, typeAgencia, Double.parseDouble(monto.getText()));
+                        Data.addReg(auxVector, Data.RetirosMtx, Data.RetirosMtxCounter);
+                        Data.increaseTransac(idAgencia, typeAgencia);
+                        Data.increaseTransac(idCliente, "TypeCl");
+                        Data.RetirosMtxCounter++;
+                        JOptionPane.showMessageDialog(null,"Retiro Exitoso", "Retiro", JOptionPane.INFORMATION_MESSAGE);
+                        Data.printMtx(Data.RetirosMtx);
+                    }
+                    
+                    else {
+                    JOptionPane.showMessageDialog(null,"Monto supera dinero Disponible en Agencia", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+                    
+                }
+                else {
+                    JOptionPane.showMessageDialog(null,"Monto supera dinero Disponible en Cuenta", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+            }
+            else {
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de cuenta", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        
+        }       
+        
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            
+            if (ahorroRbtn.isSelected()) {
+                idsCuentas=Data.getIDs(idCliente,"TypeAH");
+                idCuenta.removeAllItems();
+                for (String string : idsCuentas) {
+                idCuenta.addItem(string);
+                }
+            }
+            if (monetariaRbtn.isSelected()) {
+                idsCuentas=Data.getIDs(idCliente,"TypeM");
+                idCuenta.removeAllItems();
+                for (String string : idsCuentas) {
+                idCuenta.addItem(string);
+                }
+            }     
+        }
+        
+    }
+    
+    private class Consulta extends JPanel implements ActionListener,ChangeListener{
+        
+        JButton okBtn = new JButton();
+        
+        JLabel titleRbtn = new JLabel();
+        
+        JLabel idCuentaLbl = new JLabel();
+        JLabel saldoLbl = new JLabel();
+        
+        JComboBox idCuenta = new JComboBox();
+        JFormattedTextField saldo = new JFormattedTextField();
+        
+        JRadioButton ahorroRbtn = new JRadioButton();
+        JRadioButton monetariaRbtn = new JRadioButton();
+        ButtonGroup GroupRbtn = new ButtonGroup();
+        
+        String [] idsCuentas;
+        String idAgencia,typeAgencia,idCliente;
+        
+        Consulta(String arg1,String arg2,String arg3){
+            
+            this.idAgencia=arg1;
+            this.idCliente=arg2;
+            this.typeAgencia=arg3;
+            
+            this.setLayout(new GridBagLayout());          
+            GridBagConstraints Const = new GridBagConstraints();
+            //CONSTANTES
+            //------------------
+            Const.weightx=0.0;
+            Const.weighty=0.0;
+            Const.insets = new Insets(5,5,5,5);
+            Const.anchor = GridBagConstraints.NORTHWEST;
+            //---------------
+            
+            //RADIO BUTTONS
+            GroupRbtn.add(ahorroRbtn);
+            GroupRbtn.add(monetariaRbtn); 
+            
+            Const.gridx=0;
+            Const.gridy=0;
+            titleRbtn.setText("Tipo de Cuenta:");
+            this.add(titleRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=2;
+            ahorroRbtn.setText("Ahorro");
+            ahorroRbtn.addChangeListener(this);
+            this.add(ahorroRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=3;
+            monetariaRbtn.setText("Monetaria");
+            monetariaRbtn.addChangeListener(this);
+            this.add(monetariaRbtn, Const);
+            
+            //CAMPOS  
+            Const.insets = new Insets(5,75,5,0);
+                     
+            Const.gridx=1;
+            Const.gridy=1;
+            idCuentaLbl.setText("ID Cuenta");
+            this.add(idCuentaLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=2;
+            saldoLbl.setText("Saldo Disponible  Q.");
+            this.add(saldoLbl,Const);
+            
+            //TEXT FIELD
+            
+            Const.gridx=2;
+            Const.gridy=1;
+            idCuenta.setPreferredSize(new Dimension(200,20));
+            this.add(idCuenta, Const);
+
+            Const.gridx=2;
+            Const.gridy=2;
+            saldo.setPreferredSize(new Dimension(200,20));
+            saldo.setEnabled(false);
+            this.add(saldo, Const);
+            
+            Const.gridx=2;
+            Const.gridy=12;
+            okBtn.setText("OK");
+            okBtn.addActionListener(this);
+            this.add(okBtn,Const);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            if(ahorroRbtn.isSelected()){
+                
+                saldo.setText(Double.toString(Data.getSaldo((String)idCuenta.getSelectedItem(), "TypeAH")));
+                Data.increaseTransac(idAgencia, typeAgencia);
+                Data.increaseTransac(idCliente, "TypeCl");
+                
+                
+            }
+            else if(monetariaRbtn.isSelected()){
+                
+                saldo.setText(Double.toString(Data.getSaldo((String)idCuenta.getSelectedItem(), "TypeM")));
+                Data.increaseTransac(idAgencia, typeAgencia);
+                Data.increaseTransac(idCliente, "TypeCl");
+                
+            }
+            
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            
+            if (ahorroRbtn.isSelected()) {
+                idsCuentas=Data.getIDs(idCliente,"TypeAH");
+                idCuenta.removeAllItems();
+                for (String string : idsCuentas) {
+                idCuenta.addItem(string);
+                }
+            }
+            if (monetariaRbtn.isSelected()) {
+                idsCuentas=Data.getIDs(idCliente,"TypeM");
+                idCuenta.removeAllItems();
+                for (String string : idsCuentas) {
+                idCuenta.addItem(string);
+                }
+            }
+            
+        }
         
     }
     
@@ -461,135 +815,7 @@ public  class TransactionModule implements MouseListener{
                 idCheque.setEnabled(true);
             }
         }
-    }
-    
-    private class Retiro extends JPanel implements ActionListener,ChangeListener{
-        
-        JButton okBtn = new JButton();
-        
-        JLabel titleRbtn = new JLabel();
-        
-        JLabel idCuentaLbl = new JLabel();
-        JLabel montoLbl = new JLabel();
-        JLabel fechaLbl = new JLabel();
-        
-        JComboBox idCuenta = new JComboBox();
-        JFormattedTextField monto = new JFormattedTextField();
-        JFormattedTextField fechaAp = new JFormattedTextField();
-        
-        JRadioButton ahorroRbtn = new JRadioButton();
-        JRadioButton monetariaRbtn = new JRadioButton();
-        ButtonGroup GroupRbtn = new ButtonGroup();
-        
-        String [] auxVector= new String[3];
-        String [] idsCuentas;
-        String idAgencia,typeAgencia,idCliente;
-        
-        Retiro(String arg1,String arg2,String arg3){
-            
-            this.idAgencia=arg1;
-            this.idCliente=arg2;
-            this.typeAgencia=arg3;
-            
-            this.setLayout(new GridBagLayout());          
-            GridBagConstraints Const = new GridBagConstraints();
-            //CONSTANTES
-            //------------------
-            Const.weightx=0.0;
-            Const.weighty=0.0;
-            Const.insets = new Insets(5,5,5,5);
-            Const.anchor = GridBagConstraints.NORTHWEST;
-            //---------------
-            
-            //RADIO BUTTONS
-            GroupRbtn.add(ahorroRbtn);
-            GroupRbtn.add(monetariaRbtn); 
-            
-            Const.gridx=0;
-            Const.gridy=0;
-            titleRbtn.setText("Tipo de Cuenta:");
-            this.add(titleRbtn, Const);
-            
-            Const.gridx=0;
-            Const.gridy=2;
-            ahorroRbtn.setText("Ahorro");
-            ahorroRbtn.addChangeListener(this);
-            this.add(ahorroRbtn, Const);
-            
-            Const.gridx=0;
-            Const.gridy=3;
-            monetariaRbtn.setText("Monetaria");
-            monetariaRbtn.addChangeListener(this);
-            this.add(monetariaRbtn, Const);  
-            
-            //CAMPOS  
-            Const.insets = new Insets(5,75,5,0);
-                     
-            Const.gridx=1;
-            Const.gridy=1;
-            idCuentaLbl.setText("ID Cuenta");
-            this.add(idCuentaLbl,Const);
-            
-            Const.gridx=1;
-            Const.gridy=2;
-            montoLbl.setText("Monto a Depositar");
-            this.add(montoLbl,Const);
-            
-            Const.gridx=1;
-            Const.gridy=3;
-            fechaLbl.setText("Fecha ");
-            this.add(fechaLbl,Const);
-            
-            //TEXT FIELD
-            
-            Const.gridx=2;
-            Const.gridy=1;
-            idCuenta.setPreferredSize(new Dimension(200,20));
-            this.add(idCuenta, Const);
-
-            Const.gridx=2;
-            Const.gridy=2;
-            monto.setPreferredSize(new Dimension(200,20));
-            this.add(monto, Const);
-            
-            Const.gridx=2;
-            Const.gridy=3;
-            fechaAp.setPreferredSize(new Dimension(200,20));
-            this.add(fechaAp, Const);
-          
-            Const.gridx=2;
-            Const.gridy=12;
-            okBtn.setText("OK");
-            okBtn.addActionListener(this);
-            this.add(okBtn,Const);
-        }
-        
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-        
-        }       
-        
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            
-            if (ahorroRbtn.isSelected()) {
-                idsCuentas=Data.getIDs(idCliente,"TypeAH");
-                idCuenta.removeAllItems();
-                for (String string : idsCuentas) {
-                idCuenta.addItem(string);
-                }
-            }
-            if (monetariaRbtn.isSelected()) {
-                idsCuentas=Data.getIDs(idCliente,"TypeM");
-                idCuenta.removeAllItems();
-                for (String string : idsCuentas) {
-                idCuenta.addItem(string);
-                }
-            }     
-        }
-        
-    }
+    }      
     
     private class CambioCheques extends JPanel implements ActionListener{
         
@@ -615,8 +841,6 @@ public  class TransactionModule implements MouseListener{
         
     }
     
-    
-    
     private class SolPrestamo extends JPanel{
         
     }
@@ -625,10 +849,6 @@ public  class TransactionModule implements MouseListener{
         
     }
     
-    private class Consulta extends JPanel{
-        
-        public String IDAgencia;
-        public String IDCliente;
-        
+    
+    
     }
-}

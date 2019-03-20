@@ -14,6 +14,9 @@ public class Data {
     static String [][] ClientesMtx = new String[50][9];
     static int ClientesMtxCounter=0;
     
+    static String [][] EmpleadosMtx =  new String[50][4]; 
+    static int EmpleadosMtxCounter=0;
+    
     static String [][] AgenciasMtx = new String[50][8];
     static int AgenciasMtxCounter=0;
     
@@ -31,6 +34,9 @@ public class Data {
     
     static String [][] DepositosMtx =  new String [50][4];
     static int DepositosMtxCounter=0;
+    
+    static String [][] RetirosMtx =  new String [50][4];
+    static int RetirosMtxCounter=0;
      
     
     /**
@@ -111,6 +117,7 @@ public class Data {
                 break;
             }
         }
+        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
         
     return RegMtx;
     
@@ -279,14 +286,25 @@ public class Data {
                 
                 break;
             case "TypeC":
-                for(int i=0; i<Data.ClientesMtxCounter;i++){
+                for(int i=0; i<Data.CajerosMtxCounter;i++){
             
-                    if( ID.equals(Data.ClientesMtx[i][0])){
+                    if( ID.equals(Data.CajerosMtx[i][0])){
 
-                       Data.ClientesMtx[i][8]=Integer.toString(Integer.parseInt(Data.ClientesMtx[i][8])+1);
+                       Data.CajerosMtx[i][4]=Integer.toString(Integer.parseInt(Data.CajerosMtx[i][4])+1);
                        break;
                     }
                 }
+                
+                break;
+            case "TypeCl":
+            for(int i=0; i<Data.ClientesMtxCounter;i++){
+
+                if( ID.equals(Data.ClientesMtx[i][0])){
+
+                   Data.ClientesMtx[i][8]=Integer.toString(Integer.parseInt(Data.ClientesMtx[i][8])+1);
+                   break;
+                }
+            }
                                
                 break;
             default:
@@ -351,19 +369,260 @@ public class Data {
      * @param Type : Tipo de Cuenta - TypeAH:Cuentas de Ahorro - TypeM:Cuentas Monetarias
      * @return
      */
-    public static int getSaldo(String ID,String Type){
-        int saldo=0;
+    public static double getSaldo(String ID,String Type){
+        double saldo=0;
         
         switch(Type){
             case "TypeA":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
+                       break;
+                    }
+                }
+                
                 break;
             case "TypeB":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasAutoMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeC":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.CajerosMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeAH":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cAhorroMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeM":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       break;
+                    }
+                }
                 break;
             case "TypeP":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       break;
+                    }
+                }
                 break;
             
         }
         return saldo;
     }
+    
+    /**
+     *
+     * @param ID
+     * @param Type
+     * @param monto
+     */
+    public static void makeDebito (String ID,String Type,double monto){ 
+        
+        double saldo;
+        
+        switch(Type){
+            case "TypeA":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
+                       Data.AgenciasMtx[i][7]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeB":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasAutoMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
+                       Data.AgenciasAutoMtx[i][8]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeC":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.CajerosMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
+                       Data.CajerosMtx[i][2]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeAH":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cAhorroMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       Data.cAhorroMtx[i][3]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeM":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       Data.cMonetariaMtx[i][3]=Double.toString(saldo-monto);
+                       break;
+                       
+                    }
+                }
+                break;
+            case "TypeP":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       break;
+                    }
+                }
+                break;
+            
+        }
+        
+    }
+    
+    /**
+     *
+     * @param ID
+     * @param Type
+     * @param monto
+     */
+    public static void makeAbono (String ID,String Type,double monto){ 
+        
+        double saldo;
+        
+        switch(Type){
+            
+            case "TypeA":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
+                       Data.AgenciasMtx[i][7]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeB":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.AgenciasAutoMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
+                       Data.AgenciasAutoMtx[i][8]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeC":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.CajerosMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
+                       Data.CajerosMtx[i][2]=Double.toString(saldo-monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeAH":
+                
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cAhorroMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       Data.cAhorroMtx[i][3]=Double.toString(saldo+monto);
+                       break;
+                    }
+                }
+                
+                break;
+            case "TypeM":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                        
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       Data.cMonetariaMtx[i][3]=Double.toString(saldo+monto);
+                       break;
+                       
+                    }
+                }
+                break;
+            case "TypeP":
+                for(int i=0; i<50;i++){
+            
+                    if( ID.equals(Data.cMonetariaMtx[i][0])){                       
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       break;
+                    }
+                }
+                break;
+            
+        }
+        
+    }
+    
     
 }
