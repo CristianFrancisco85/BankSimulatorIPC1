@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -16,13 +17,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
+import javax.swing.text.MaskFormatter;
 
 /**
  *
  * @author Cristian Meoño 201801397
  */
 
-public class AdminModule {
+public class AdminModule  {
 
     public JInternalFrame AdminFrame = new JInternalFrame("Modulo de Administracion", true, true, false, true);
     public JTabbedPane TabbedPane = new JTabbedPane();
@@ -50,7 +52,7 @@ public class AdminModule {
 
     }
 
-    class ClientePanel extends JPanel implements ActionListener {
+    class ClientePanel extends JPanel implements ActionListener   {
 
         JButton okBtn = new JButton();
 
@@ -64,11 +66,11 @@ public class AdminModule {
         JLabel prestamos = new JLabel();
         JLabel tjtcredito = new JLabel();
         JLabel transacciones = new JLabel();
-
+                   
         JFormattedTextField idCliente = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreCliente = new JFormattedTextField(new String(""));
-        JFormattedTextField direccionCliente = new JFormattedTextField(new String(""));
-        JFormattedTextField telefonoCliente = new JFormattedTextField(new Integer(1));
+        JFormattedTextField direccionCliente = new JFormattedTextField();
+        JFormattedTextField telefonoCliente = new JFormattedTextField(Data.getMask("####-####"));
         JFormattedTextField ctsahorroCliente = new JFormattedTextField();
         JFormattedTextField ctsmonetariasCliente = new JFormattedTextField();
         JFormattedTextField prestamosCliente = new JFormattedTextField();
@@ -355,12 +357,12 @@ public class AdminModule {
         JLabel transac = new JLabel();
 
         JFormattedTextField idAgencia = new JFormattedTextField(new Integer(0));
-        JFormattedTextField nombreAgencia = new JFormattedTextField(new String(""));
-        JFormattedTextField direccionAgencia = new JFormattedTextField(new String(""));
-        JFormattedTextField telefonoAgencia = new JFormattedTextField(new Integer(0));
-        JFormattedTextField numcajasAgencia = new JFormattedTextField();
-        JFormattedTextField numescritoriosAgencia = new JFormattedTextField();
-        JFormattedTextField efectivoAgencia = new JFormattedTextField();
+        JFormattedTextField nombreAgencia = new JFormattedTextField();
+        JFormattedTextField direccionAgencia = new JFormattedTextField();
+        JFormattedTextField telefonoAgencia = new JFormattedTextField(Data.getMask("####-####"));
+        JFormattedTextField numcajasAgencia = new JFormattedTextField(new Integer(0));
+        JFormattedTextField numescritoriosAgencia = new JFormattedTextField(new Integer(0));
+        JFormattedTextField efectivoAgencia = new JFormattedTextField(new Double(0.00));
         JFormattedTextField numtransacAgencia = new JFormattedTextField();
 
         JRadioButton delRbtn = new JRadioButton();
@@ -589,13 +591,13 @@ public class AdminModule {
         JLabel transac = new JLabel();
 
         JFormattedTextField idAgencia = new JFormattedTextField(new Integer(0));
-        JFormattedTextField nombreAgencia = new JFormattedTextField(new String(""));
-        JFormattedTextField direccionAgencia = new JFormattedTextField(new String(""));
-        JFormattedTextField telefonoAgencia = new JFormattedTextField();
-        JFormattedTextField numcajasAgencia = new JFormattedTextField();
-        JFormattedTextField numescritoriosAgencia = new JFormattedTextField();
-        JFormattedTextField efectivoAgencia = new JFormattedTextField();
-        JFormattedTextField numautoAgencia = new JFormattedTextField();
+        JFormattedTextField nombreAgencia = new JFormattedTextField();
+        JFormattedTextField direccionAgencia = new JFormattedTextField();
+        JFormattedTextField telefonoAgencia = new JFormattedTextField(Data.getMask("####-####"));
+        JFormattedTextField numcajasAgencia = new JFormattedTextField(new Integer(0));
+        JFormattedTextField numescritoriosAgencia = new JFormattedTextField(new Integer(0));
+        JFormattedTextField efectivoAgencia = new JFormattedTextField(new Integer(0));
+        JFormattedTextField numautoAgencia = new JFormattedTextField(new Double(0.00));
         JFormattedTextField numtransacAgencia = new JFormattedTextField();
 
         JRadioButton delRbtn = new JRadioButton();
@@ -833,8 +835,8 @@ public class AdminModule {
         JLabel numtrans = new JLabel();
 
         JFormattedTextField idCajero = new JFormattedTextField(new Integer(0));
-        JFormattedTextField ubicacionCajero = new JFormattedTextField(new String(""));
-        JFormattedTextField efectivoCajero = new JFormattedTextField(new String(""));
+        JFormattedTextField ubicacionCajero = new JFormattedTextField();
+        JFormattedTextField efectivoCajero = new JFormattedTextField(new Double(0.00));
         JFormattedTextField estadoCajero = new JFormattedTextField();
         JFormattedTextField numtransCajero = new JFormattedTextField();
 
@@ -1197,5 +1199,5 @@ public class AdminModule {
         
 
     }
-       
+      
 }

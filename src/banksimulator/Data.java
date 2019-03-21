@@ -1,6 +1,8 @@
 package banksimulator;
 
+import java.text.ParseException;
 import javax.swing.JOptionPane;
+import javax.swing.text.MaskFormatter;
 
 /**
  *
@@ -29,7 +31,7 @@ public class Data {
     static String [][] cAhorroMtx =  new String [50][4];
     static int cAhorroMtxCounter=0;
     
-    static String [][] cMonetariaMtx =  new String [50][4];
+    static String [][] cMonetariaMtx =  new String [50][5];
     static int cMonetariaMtxCounter=0;
     
     static String [][] DepositosMtx =  new String [50][4];
@@ -37,6 +39,12 @@ public class Data {
     
     static String [][] RetirosMtx =  new String [50][4];
     static int RetirosMtxCounter=0;
+    
+    static String [][] ChequesMtx= new String[50][4];
+    static int ChequesMtxCounter=0;
+            
+    static String[][] CallCenterMtx = new String[50][5];
+    static int CallCenterMtxCounter=0;
      
     
     /**
@@ -378,7 +386,8 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][6].replace(",",""));
+                       System.err.println(saldo);
                        break;
                     }
                 }
@@ -389,7 +398,7 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasAutoMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][6].replace(",",""));
                        break;
                     }
                 }
@@ -401,7 +410,7 @@ public class Data {
             
                     if( ID.equals(Data.CajerosMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2].replace(",",""));
                        break;
                     }
                 }
@@ -413,7 +422,7 @@ public class Data {
             
                     if( ID.equals(Data.cAhorroMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -424,7 +433,7 @@ public class Data {
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -434,7 +443,7 @@ public class Data {
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -461,8 +470,8 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
-                       Data.AgenciasMtx[i][7]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][6].replace(",",""));
+                       Data.AgenciasMtx[i][6]=Double.toString(saldo-monto);
                        break;
                     }
                 }
@@ -474,8 +483,8 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasAutoMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
-                       Data.AgenciasAutoMtx[i][8]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][6].replace(",",""));
+                       Data.AgenciasAutoMtx[i][6]=Double.toString(saldo-monto);
                        break;
                     }
                 }
@@ -487,7 +496,7 @@ public class Data {
             
                     if( ID.equals(Data.CajerosMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2].replace(",",""));
                        Data.CajerosMtx[i][2]=Double.toString(saldo-monto);
                        break;
                     }
@@ -500,7 +509,7 @@ public class Data {
             
                     if( ID.equals(Data.cAhorroMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3].replace(",",""));
                        Data.cAhorroMtx[i][3]=Double.toString(saldo-monto);
                        break;
                     }
@@ -512,8 +521,9 @@ public class Data {
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        Data.cMonetariaMtx[i][3]=Double.toString(saldo-monto);
+                       System.err.print("SI ENTRO");
                        break;
                        
                     }
@@ -524,7 +534,7 @@ public class Data {
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -552,8 +562,8 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7]);
-                       Data.AgenciasMtx[i][7]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.AgenciasMtx[i][7].replace(",",""));
+                       Data.AgenciasMtx[i][7]=Double.toString(saldo+monto);
                        break;
                     }
                 }
@@ -565,8 +575,8 @@ public class Data {
             
                     if( ID.equals(Data.AgenciasAutoMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8]);
-                       Data.AgenciasAutoMtx[i][8]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.AgenciasAutoMtx[i][8].replace(",",""));
+                       Data.AgenciasAutoMtx[i][8]=Double.toString(saldo+monto);
                        break;
                     }
                 }
@@ -578,8 +588,8 @@ public class Data {
             
                     if( ID.equals(Data.CajerosMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.CajerosMtx[i][2]);
-                       Data.CajerosMtx[i][2]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.CajerosMtx[i][2].replace(",",""));
+                       Data.CajerosMtx[i][2]=Double.toString(saldo+monto);
                        break;
                     }
                 }
@@ -591,7 +601,7 @@ public class Data {
             
                     if( ID.equals(Data.cAhorroMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cAhorroMtx[i][3].replace(",",""));
                        Data.cAhorroMtx[i][3]=Double.toString(saldo+monto);
                        break;
                     }
@@ -603,7 +613,7 @@ public class Data {
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        Data.cMonetariaMtx[i][3]=Double.toString(saldo+monto);
                        break;
                        
@@ -614,7 +624,7 @@ public class Data {
                 for(int i=0; i<50;i++){
             
                     if( ID.equals(Data.cMonetariaMtx[i][0])){                       
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3]);
+                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -624,5 +634,44 @@ public class Data {
         
     }
     
+    /**
+     *
+     * @param mascara
+     * @return
+     * @throws ParseException
+     */
+    public static MaskFormatter getMask(String mascara)  {
+        // Inicializamos el objeto
+         MaskFormatter Format = new MaskFormatter();
+
+         try {
+             Format = new MaskFormatter(mascara);
+         } catch (ParseException e) {
+             // Algún error que pueda ocurrir en el casteo
+             e.printStackTrace();
+         }
+         return Format;
+    }
     
+    public static String[] getCheques(String ID){
+        
+        int counter=0;
+        
+        for(int i=0;i<50;i++){         
+            if( ID.equals(Data.ChequesMtx[i][2])){                      
+                counter++;                      
+            }                   
+        }
+        
+        String[] cheques= new String[counter];
+        counter=0;
+        for(int i=0;i<50;i++){         
+            if( ID.equals(Data.ChequesMtx[i][2])){                      
+                cheques[counter]=Data.ChequesMtx[i][0]+"- Q."+Data.ChequesMtx[i][3];                      
+            }                   
+        }
+        
+        return cheques;
+    }
+
 }
