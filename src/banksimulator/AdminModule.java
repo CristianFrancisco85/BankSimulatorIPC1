@@ -1,12 +1,15 @@
 package banksimulator;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -16,8 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.text.MaskFormatter;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+
 
 /**
  *
@@ -215,17 +221,17 @@ public class AdminModule  {
 
             Const.gridx = 2;
             Const.gridy = 7;
-            tjtcreditoCliente.setPreferredSize(new Dimension(200, 20));
-            tjtcreditoCliente.setText("");
-            tjtcreditoCliente.setEnabled(false);
-            this.add(tjtcreditoCliente, Const);
-
-            Const.gridx = 2;
-            Const.gridy = 8;
             prestamosCliente.setPreferredSize(new Dimension(200, 20));
             prestamosCliente.setText("");
             prestamosCliente.setEnabled(false);
             this.add(prestamosCliente, Const);
+            
+            Const.gridx = 2;
+            Const.gridy = 8;
+            tjtcreditoCliente.setPreferredSize(new Dimension(200, 20));
+            tjtcreditoCliente.setText("");
+            tjtcreditoCliente.setEnabled(false);
+            this.add(tjtcreditoCliente, Const);           
 
             Const.gridx = 2;
             Const.gridy = 9;
@@ -1011,15 +1017,7 @@ public class AdminModule  {
         }
 
     }
-
-    class TarjetaCreditoPanel extends JPanel {
-
-    }
-
-    class PrestamosPanel extends JPanel {
-
-    }
-
+    
     class EmpleadosPanel extends JPanel implements ActionListener{
 
         JButton okBtn = new JButton();
@@ -1199,5 +1197,133 @@ public class AdminModule  {
         
 
     }
+
+    class TarjetaCreditoPanel extends JPanel implements MouseListener{
+        
+        private  String[] columnNames = {"ID","ID Cliente","Fecha de Solicitud", "Monto Prestado","Monto Abonado"};
+        String[] auxVector= new String[5];
+
+        private Object[][] tableData = Data.sCreditoMtx;
+
+        private JTable tablaCreditos =  new JTable(tableData,columnNames);
+        
+        String IDCredito;
+        
+        TarjetaCreditoPanel(){
+      
+            tablaCreditos.addMouseListener(this);
+            this.add(new JScrollPane(tablaCreditos),BorderLayout.CENTER);
+            
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            
+            //Se obtiene valor del ID     
+            Point point = e.getPoint();
+            int row = tablaCreditos.rowAtPoint(point);
+            TableModel model = tablaCreditos.getModel();
+            IDCredito=String.valueOf(model.getValueAt(row,0));
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea aprobar el Credito con ID: ?"+IDCredito, "Confirm", JOptionPane.YES_NO_OPTION);
+            if(resp==0){
+                auxVector=Data.readReg(IDCredito, Data.sCreditoMtx, Data.sCreditoMtxCounter);
+                Data.delReg(IDCredito, Data.sCreditoMtx, Data.sCreditoMtxCounter);
+                Data.sCreditoMtxCounter--;
+                Data.addReg(auxVector, Data.aCreditoMtx, Data.aCreditoMtxCounter);
+                Data.aCreditoMtxCounter++;
+                Data.addValueIn(auxVector[1], IDCredito, Data.ClientesMtx, Data.ClientesMtxCounter,7);
+                JOptionPane.showMessageDialog(null,"Credito Aprobado", "Aprobacion", JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            
+        }
+
+    }
+
+    class PrestamosPanel extends JPanel implements MouseListener {
+        
+        private  String[] columnNames = {"ID","ID Cliente","Fecha de Solicitud", "Monto Prestado","Monto Abonado"};
+        String[] auxVector = new String[5];
+
+        private Object[][] tableData = Data.sPrestamosMtx;
+
+        private JTable tablaPrestamos =  new JTable(tableData,columnNames);
+        
+        String IDPrestamo;
+        
+        PrestamosPanel(){
+      
+            tablaPrestamos.addMouseListener(this);
+            this.add(new JScrollPane(tablaPrestamos),BorderLayout.CENTER);
+            
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            
+            //Se obtiene valor del ID     
+            Point point = e.getPoint();
+            int row = tablaPrestamos.rowAtPoint(point);
+            TableModel model = tablaPrestamos.getModel();
+            IDPrestamo=String.valueOf(model.getValueAt(row,0));
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea aprobar el Prestamo con ID: "+IDPrestamo+" ?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if(resp==0){
+                auxVector=Data.readReg(IDPrestamo, Data.sPrestamosMtx, Data.sPrestamosMtxCounter);
+                Data.delReg(auxVector[0], Data.sPrestamosMtx, Data.sPrestamosMtxCounter);
+                Data.sPrestamosMtxCounter--;
+                Data.addReg(auxVector, Data.aPrestamosMtx, Data.aPrestamosMtxCounter);
+                Data.aPrestamosMtxCounter++;
+                Data.addValueIn(auxVector[1], IDPrestamo, Data.ClientesMtx, Data.ClientesMtxCounter,6);
+                JOptionPane.showMessageDialog(null,"Prestamo Aprobado", "Aprobacion", JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            
+        }
+        
+        
+        
+        
+
+    }
+
+    
       
 }
