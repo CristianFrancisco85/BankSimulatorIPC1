@@ -347,7 +347,7 @@ public class Data {
     /**
      *
      * @param ID: ID de cliente
-     * @param Type : Tipo de consulta - TypeAH:Cuentas de Ahorro - TypeM:Cuentas Monetarias - TypeP:Prestamos
+     * @param Type : Tipo de consulta - TypeAH:Cuentas de Ahorro - TypeM:Cuentas Monetarias - TypeP:Prestamos - TypeCR:Creditos
      * @return Retorna un vector donde cada espacio es un elemento
      */
     public static String[] getIDs(String ID,String Type){
@@ -476,13 +476,23 @@ public class Data {
             case "TypeP":
                 for(int i=0; i<50;i++){
             
-                    if( ID.equals(Data.cMonetariaMtx[i][0])){
+                    if( ID.equals(Data.aPrestamosMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.cMonetariaMtx[i][3].replace(",",""));
+                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][4].replace(",",""));
                        break;
                     }
                 }
                 break;
+            case "TypeCR":
+            for(int i=0; i<50;i++){
+
+                if( ID.equals(Data.aCreditoMtx[i][0])){
+
+                   saldo = Double.parseDouble(Data.aCreditoMtx[i][4].replace(",",""));
+                   break;
+                }
+            }
+            break;
             
         }
         return saldo;
@@ -566,13 +576,24 @@ public class Data {
             case "TypeP":
                 for(int i=0; i<50;i++){
             
-                    if( ID.equals(Data.aPrestamosMtx[i][0])){
-                        
-                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][4].replace(",",""));
+                    if( ID.equals(Data.aPrestamosMtx[i][0])){                       
+                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][3].replace(",",""));
+                       Data.aPrestamosMtx[i][3]=Double.toString(saldo-monto);
                        break;
                     }
                 }
                 break;
+                
+            case "TypeCR":
+            for(int i=0; i<50;i++){
+
+                if( ID.equals(Data.aCreditoMtx[i][0])){                       
+                   saldo = Double.parseDouble(Data.aCreditoMtx[i][3].replace(",",""));
+                   Data.aCreditoMtx[i][3]=Double.toString(saldo-monto);
+                   break;
+                }
+            }
+            break;
             
         }
         

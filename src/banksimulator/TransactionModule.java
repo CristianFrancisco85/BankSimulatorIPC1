@@ -37,7 +37,7 @@ import javax.swing.table.TableModel;
  */
 public  class TransactionModule implements MouseListener{
     
-    private  String[] columnNames = {"ID","Nombre","Direccion", "Telefono","Cuentas de Ahorro","Cuentas Monetarias","Prestamos","Tarjetas de Credito","Transacciones"};
+    private final  String[] columnNames = {"ID","Nombre","Direccion", "Telefono","Cuentas de Ahorro","Cuentas Monetarias","Prestamos","Tarjetas de Credito","Transacciones"};
     private final String[] lugaresMtx = {"Agencia Bancaria","Agencia con AutoBanco","Cajero Automatico","Call-Center"};
     
     private Object[][] tableData = Data.ClientesMtx;

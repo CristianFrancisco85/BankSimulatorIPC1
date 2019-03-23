@@ -1204,16 +1204,23 @@ public class AdminModule  {
         String[] auxVector= new String[5];
 
         private Object[][] tableData = Data.sCreditoMtx;
+        private Object[][] tableData2 = Data.aCreditoMtx;
+        JLabel title = new JLabel();
+        JLabel title2 = new JLabel();
 
         private JTable tablaCreditos =  new JTable(tableData,columnNames);
+        private JTable tablaCreditos2 =  new JTable(tableData2,columnNames);
         
         String IDCredito;
         
         TarjetaCreditoPanel(){
-      
+            title.setText("Solicitudes");
+            //this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
+            title2.setText("Aprobadas");
             tablaCreditos.addMouseListener(this);
             this.add(new JScrollPane(tablaCreditos),BorderLayout.CENTER);
-            
+            //this.add(new JScrollPane(tablaCreditos2),BorderLayout.CENTER);
+            //this.add(title2,BorderLayout.AFTER_LINE_ENDS);            
         }
 
         @Override
@@ -1224,7 +1231,7 @@ public class AdminModule  {
             int row = tablaCreditos.rowAtPoint(point);
             TableModel model = tablaCreditos.getModel();
             IDCredito=String.valueOf(model.getValueAt(row,0));
-            int resp = JOptionPane.showConfirmDialog(null, "¿Desea aprobar el Credito con ID: ?"+IDCredito, "Confirm", JOptionPane.YES_NO_OPTION);
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea aprobar el Credito con ID: "+IDCredito+" ?", "Confirm", JOptionPane.YES_NO_OPTION);
             if(resp==0){
                 auxVector=Data.readReg(IDCredito, Data.sCreditoMtx, Data.sCreditoMtxCounter);
                 Data.delReg(IDCredito, Data.sCreditoMtx, Data.sCreditoMtxCounter);
@@ -1265,16 +1272,24 @@ public class AdminModule  {
         String[] auxVector = new String[5];
 
         private Object[][] tableData = Data.sPrestamosMtx;
+        private Object[][] tableData2 = Data.aPrestamosMtx;
+        JLabel title = new JLabel();
+        JLabel title2 = new JLabel();
 
         private JTable tablaPrestamos =  new JTable(tableData,columnNames);
+        private JTable tablaPrestamos2 =  new JTable(tableData2,columnNames);
         
         String IDPrestamo;
         
         PrestamosPanel(){
+            title.setText("Solicitudes");
+            //this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
+            title2.setText("Aprobadas");
       
             tablaPrestamos.addMouseListener(this);
             this.add(new JScrollPane(tablaPrestamos),BorderLayout.CENTER);
-            
+            //this.add(new JScrollPane(tablaPrestamos2),BorderLayout.CENTER);
+            //this.add(title2,BorderLayout.AFTER_LINE_ENDS);
         }
 
         @Override

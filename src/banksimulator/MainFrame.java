@@ -63,7 +63,7 @@ public class MainFrame extends JFrame  {
         saleBtn = this.newBtn("Compras");
         saleBtn.setToolTipText("Simular Compra");
         saleBtn.addActionListener(new saleBtn());
-        SideMenu.add(reportBtn);
+        SideMenu.add(saleBtn);
         
         this.setVisible(true);   
         
@@ -96,6 +96,7 @@ public class MainFrame extends JFrame  {
         Administrator.AdminFrame.show();        
         reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
+        saleBtn.setBackground(new java.awt.Color(17, 120, 204));
         
         Reports.ReportFrame.dispose();
         Transaction.TransactionFrame.dispose();
@@ -113,6 +114,7 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         reportBtn.setBackground(new java.awt.Color(17, 120, 204));
+        saleBtn.setBackground(new java.awt.Color(17, 120, 204));
         Reports.ReportFrame.dispose();
         Administrator.AdminFrame.dispose();
         ComprasFrame.dispose();
@@ -128,6 +130,7 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
+        saleBtn.setBackground(new java.awt.Color(17, 120, 204));
         Transaction.TransactionFrame.dispose();
         Administrator.AdminFrame.dispose(); 
         ComprasFrame.dispose();
@@ -143,6 +146,7 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
+        reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         Transaction.TransactionFrame.dispose();
         Administrator.AdminFrame.dispose();
         Reports.ReportFrame.dispose();
