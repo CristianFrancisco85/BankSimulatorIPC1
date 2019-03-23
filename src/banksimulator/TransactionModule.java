@@ -82,7 +82,7 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Emision de Cheques", new EmisionCheques(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.addTab("Sol. Prestamo", new SolPrestamo(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.addTab("Sol. Credito", new SolCredito(IDPlace,IDCliente,"TypeA"));
-                    Window.TabbedPane.addTab("Pagos", new Pagos());
+                    Window.TabbedPane.addTab("Pagos", new Pagos(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeA"));
                     Window.TabbedPane.add("Apertura Cuentas", new AbrirCts(IDPlace,IDCliente,"TypeA"));
                     Window.setVisible(true);
@@ -98,7 +98,7 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Emision de Cheques", new EmisionCheques(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Sol. Prestamo", new SolPrestamo(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Sol. Credito", new SolCredito(IDPlace,IDCliente,"TypeB"));
-                    Window.TabbedPane.addTab("Pagos", new Pagos());
+                    Window.TabbedPane.addTab("Pagos", new Pagos(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.add("Apertura Cuentas", new AbrirCts(IDPlace,IDCliente,"TypeB"));
                     Window.setVisible(true);
@@ -113,8 +113,7 @@ public  class TransactionModule implements MouseListener{
                 break;
                 
                 case "Call-Center":                   
-                    Window.TabbedPane.addTab("Deposito", new Deposito("Single",IDCliente,"TypeX"));
-                    Window.TabbedPane.addTab("Pagos", new Pagos());
+                    Window.TabbedPane.addTab("Transferencias", new Transferencias("Single",IDCliente,"TypeX"));
                     Window.setVisible(true);
                 break;
 
@@ -1124,14 +1123,474 @@ public  class TransactionModule implements MouseListener{
         }
     }
     
-    private class Pagos extends JPanel implements ActionListener{
+    private class Pagos extends JPanel implements ActionListener,ChangeListener{
         
-        public String IDAgencia;
-        public String IDCliente;
+        JButton okBtn = new JButton();
+        
+        JLabel titleRbtn = new JLabel();
+        JLabel title2Rbtn = new JLabel();
+        
+        JLabel idPagoLbl = new JLabel();
+        JLabel conceptoLbl = new JLabel();
+        JLabel montoLbl = new JLabel();
+        JLabel tipoLbl = new JLabel();
+        JLabel fechaLbl = new JLabel();
+        
+        JComboBox idCheque = new JComboBox();     
+        JFormattedTextField idPago = new JFormattedTextField();       
+        JComboBox concepto = new JComboBox();
+        JFormattedTextField monto = new JFormattedTextField(new Double(0.00));
+        JFormattedTextField tipoPago = new JFormattedTextField();
+        JFormattedTextField fecha = new JFormattedTextField();
+        
+        JRadioButton servicioRbtn = new JRadioButton();
+        JRadioButton prestamoRbtn = new JRadioButton();
+        JRadioButton creditoRbtn = new JRadioButton();
+        ButtonGroup GroupRbtn = new ButtonGroup();
+        
+        JRadioButton efectivoRbtn = new JRadioButton();
+        JRadioButton chequeRbtn = new JRadioButton();
+        ButtonGroup Group2Rbtn = new ButtonGroup();
+        
+        String [] idsVector;
+        int respuesta;
+        String respuesta2;
+        String [] Opciones={"Obtener en Efectivo","Depositar"};
+        String [] Opciones2={"Ahorro","Monetaria"};
+        String [] idsCheques;
+        String [] cuentas;
+        String[] auxVector= new String[5];
+        String[] auxVector2=new String[4];
+        String idAgencia,typeAgencia,idCliente;
+        
+        Pagos(String arg1,String arg2,String arg3){
+            this.idAgencia=arg1;
+            this.idCliente=arg2;
+            this.typeAgencia=arg3;
+                                             
+            this.setLayout(new GridBagLayout());          
+            GridBagConstraints Const = new GridBagConstraints();
+            //CONSTANTES
+            //------------------
+            Const.weightx=0.0;
+            Const.weighty=0.0;
+            Const.insets = new Insets(5,5,5,5);
+            Const.anchor = GridBagConstraints.NORTHWEST;
+            //---------------
+            
+            //RADIO BUTTONS
+            GroupRbtn.add(servicioRbtn);
+            GroupRbtn.add(prestamoRbtn);
+            GroupRbtn.add(creditoRbtn);
+            
+            Group2Rbtn.add(efectivoRbtn);
+            Group2Rbtn.add(chequeRbtn); 
+            
+            
+            Const.gridx=0;
+            Const.gridy=0;
+            titleRbtn.setText("Tipo de pago:");
+            this.add(titleRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=2;
+            servicioRbtn.setText("Servicios");
+            servicioRbtn.addChangeListener(this);
+            this.add(servicioRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=3;
+            prestamoRbtn.setText("Prestamo");
+            prestamoRbtn.addChangeListener(this);
+            this.add(prestamoRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=4;
+            creditoRbtn.setText("Credito");
+            creditoRbtn.addChangeListener(this);
+            this.add(creditoRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=5;
+            title2Rbtn.setText("Metodo de Pago:");
+            this.add(title2Rbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=6;
+            efectivoRbtn.setText("Efectivo");
+            efectivoRbtn.addChangeListener(this);
+            this.add(efectivoRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=7;
+            chequeRbtn.setText("Cheque");
+            chequeRbtn.addChangeListener(this);
+            this.add(chequeRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=8;
+            idCheque.setEnabled(false);
+            idCheque.setPreferredSize(new Dimension(100,20));
+            this.add(idCheque, Const);
+            
+            //CAMPOS  
+            Const.insets = new Insets(5,75,5,0);
+                     
+            Const.gridx=1;
+            Const.gridy=1;
+            idPagoLbl.setText("ID Pago");
+            this.add(idPagoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=2;
+            conceptoLbl.setText("Concepto");
+            this.add(conceptoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=3;
+            montoLbl.setText("Monto");
+            this.add(montoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=4;
+            tipoLbl.setText("Tipo");
+            this.add(tipoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=5;
+            fechaLbl.setText("Fecha ");
+            this.add(fechaLbl,Const);                                  
+            
+            //TEXT FIELD
+            
+            Const.gridx=2;
+            Const.gridy=1;
+            idPago.setPreferredSize(new Dimension(200,20));
+            this.add(idPago, Const);
+            
+            Const.gridx=2;
+            Const.gridy=2;
+            concepto.setPreferredSize(new Dimension(200,20));
+            this.add(concepto, Const);
+
+            Const.gridx=2;
+            Const.gridy=3;
+            monto.setPreferredSize(new Dimension(200,20));
+            this.add(monto, Const);
+            
+            Const.gridx=2;
+            Const.gridy=4;
+            tipoPago.setPreferredSize(new Dimension(200,20));
+            tipoPago.setEnabled(false);
+            this.add(tipoPago, Const); 
+            
+            Const.gridx=2;
+            Const.gridy=5;
+            fecha.setPreferredSize(new Dimension(200,20));
+            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setEnabled(false);
+            this.add(fecha, Const);   
+                    
+            Const.gridx=2;
+            Const.gridy=12;
+            okBtn.setText("OK");
+            okBtn.addActionListener(this);
+            this.add(okBtn,Const);
+            
+        }
         
         @Override
         public void actionPerformed(ActionEvent e) {
+            
+            auxVector[0]=idPago.getText();
+            auxVector[1]=(String)concepto.getSelectedItem();
+            auxVector[2]=monto.getText();
+            auxVector[3]=tipoPago.getText();
+            auxVector[4]=fecha.getText();
+                      
+            if(servicioRbtn.isSelected()){
+                
+                if(efectivoRbtn.isSelected()){
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){                       
+                        Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);
+                        Data.makeAbono(idAgencia, typeAgencia, Double.parseDouble(monto.getText().replace(",","")));
+                        Data.PagosMtxCounter++;
+                        Data.increaseTransac(idAgencia, typeAgencia);
+                        Data.increaseTransac(idCliente, "TypeCl");
+                        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                    }  
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                else if(chequeRbtn.isSelected()){
+                    
+                    auxVector2=Data.readReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                    
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){   
+                        
+                        if(Double.parseDouble(auxVector2[3].replace(",",""))<= Double.parseDouble(monto.getText().replace(",",""))){
+                          Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                          Data.ChequesMtxCounter--;
+                          Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter); 
+                          Data.PagosMtxCounter++;
+                          Data.increaseTransac(idAgencia, typeAgencia);
+                          Data.increaseTransac(idCliente, "TypeCl");
+                          JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                          }  
+                        else{
+                            Double diferencia = Double.parseDouble(auxVector2[3].replace(",",""))-Double.parseDouble(monto.getText().replace(",",""));
+                            Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                            Data.ChequesMtxCounter--;
+                            Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);                   
+                            Data.PagosMtxCounter++;
+                            Data.increaseTransac(idAgencia, typeAgencia);
+                            Data.increaseTransac(idCliente, "TypeCl");
+                            respuesta = JOptionPane.showOptionDialog(this,"Tiene un Diferencia de "+diferencia+" ¿Que desea hacer?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones,Opciones[0]);
+                            if(respuesta==0){
+                                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                            else{
+                                respuesta = JOptionPane.showOptionDialog(this,"Dese depositar a cuenta de ahorro o monetaria?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones2,Opciones2[0]);
+                                if(respuesta==0){
+                                    cuentas=Data.getIDs(idCliente, "TypeAH");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeAH", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta de Ahorro", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else{
+                                    cuentas=Data.getIDs(idCliente, "TypeM");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeM", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta Monetaria", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                    
+                                }
+                            }
+                        }
+                    }
+                    
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }                                                                                                                                     
+                }  
+                
+                else{
+                        JOptionPane.showMessageDialog(null,"Seleccione un metodo de pago", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            
+            else if(prestamoRbtn.isSelected()){
+                
+                if(efectivoRbtn.isSelected()){
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){
+                        auxVector[1]=auxVector[1]+" - Prestamo";
+                        Data.makeAbono(idAgencia, typeAgencia, Double.parseDouble(monto.getText().replace(",","")));
+                        Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);
+                        Data.PagosMtxCounter++;
+                        Data.increaseTransac(idAgencia, typeAgencia);
+                        Data.increaseTransac(idCliente, "TypeCl");
+                        Data.makeAbono((String)concepto.getSelectedItem(), "TypeP", Double.parseDouble(monto.getText().replace(",","")));
+                        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                    }  
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                
+                }
+                
+                else if(chequeRbtn.isSelected()){
+                    
+                    auxVector2=Data.readReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                    
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){   
+                        
+                        if(Double.parseDouble(auxVector2[3].replace(",",""))<= Double.parseDouble(monto.getText().replace(",",""))){
+                          Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                          Data.ChequesMtxCounter--;
+                          auxVector[1]=auxVector[1]+" - Prestamo";
+                          Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter); 
+                          Data.PagosMtxCounter++;
+                          Data.increaseTransac(idAgencia, typeAgencia);
+                          Data.increaseTransac(idCliente, "TypeCl");
+                          Data.makeAbono((String)concepto.getSelectedItem(), "TypeP", Double.parseDouble(monto.getText().replace(",","")));
+                          JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                          }  
+                        else{
+                            Double diferencia = Double.parseDouble(auxVector2[3].replace(",",""))-Double.parseDouble(monto.getText().replace(",",""));
+                            Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                            Data.ChequesMtxCounter--;
+                            Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);                   
+                            Data.PagosMtxCounter++;
+                            Data.increaseTransac(idAgencia, typeAgencia);
+                            Data.increaseTransac(idCliente, "TypeCl");
+                            respuesta = JOptionPane.showOptionDialog(this,"Tiene un Diferencia de "+diferencia+" ¿Que desea hacer?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones,Opciones[0]);
+                            if(respuesta==0){
+                                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                            else{
+                                respuesta = JOptionPane.showOptionDialog(this,"Dese depositar a cuenta de ahorro o monetaria?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones2,Opciones2[0]);
+                                if(respuesta==0){
+                                    cuentas=Data.getIDs(idCliente, "TypeAH");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeAH", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta de Ahorro", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else{
+                                    cuentas=Data.getIDs(idCliente, "TypeM");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeM", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta Monetaria", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                    
+                                }
+                            }
+                        }
+                    }
+                    
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                
+                else{
+                        JOptionPane.showMessageDialog(null,"Seleccione un metodo de pago", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                                              
+            }
+            
+            else if(creditoRbtn.isSelected()){
+                
+                if(efectivoRbtn.isSelected()){
+                    
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){  
+                        auxVector[1]=auxVector[1]+" - Credito";
+                        Data.makeAbono(idAgencia, typeAgencia, Double.parseDouble(monto.getText().replace(",","")));
+                        Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);
+                        Data.PagosMtxCounter++;
+                        Data.increaseTransac(idAgencia, typeAgencia);
+                        Data.increaseTransac(idCliente, "TypeCl");
+                        Data.makeAbono((String)concepto.getSelectedItem(), "TypeCR", Double.parseDouble(monto.getText().replace(",","")));
+                        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                    }  
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                
+                }
+                
+                else if(chequeRbtn.isSelected()){
+                    auxVector2=Data.readReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                    
+                    if(!Data.checkPK(idPago.getText(), Data.PagosMtx, Data.PagosMtxCounter)){   
+                        
+                        if(Double.parseDouble(auxVector2[3].replace(",",""))<= Double.parseDouble(monto.getText().replace(",",""))){
+                          Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                          Data.ChequesMtxCounter--;
+                          auxVector[1]=auxVector[1]+" - Credito";
+                          Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter); 
+                          Data.PagosMtxCounter++;
+                          Data.increaseTransac(idAgencia, typeAgencia);
+                          Data.increaseTransac(idCliente, "TypeCl");
+                          Data.makeAbono((String)concepto.getSelectedItem(), "TypeCR", Double.parseDouble(monto.getText()));
+                          JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                          }  
+                        else{
+                            Double diferencia = Double.parseDouble(auxVector2[3].replace(",",""))-Double.parseDouble(monto.getText().replace(",",""));
+                            Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
+                            Data.ChequesMtxCounter--;
+                            Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter);                   
+                            Data.PagosMtxCounter++;
+                            Data.increaseTransac(idAgencia, typeAgencia);
+                            Data.increaseTransac(idCliente, "TypeCl");
+                            respuesta = JOptionPane.showOptionDialog(this,"Tiene un Diferencia de "+diferencia+" ¿Que desea hacer?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones,Opciones[0]);
+                            if(respuesta==0){
+                                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                            else{
+                                respuesta = JOptionPane.showOptionDialog(this,"Dese depositar a cuenta de ahorro o monetaria?","Succes",JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,null,Opciones2,Opciones2[0]);
+                                if(respuesta==0){
+                                    cuentas=Data.getIDs(idCliente, "TypeAH");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeAH", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta de Ahorro", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                }
+                                else{
+                                    cuentas=Data.getIDs(idCliente, "TypeM");
+                                    respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
+                                    Data.makeAbono(respuesta2, "TypeM", diferencia);
+                                    JOptionPane.showMessageDialog(null,"Depositado a Cuenta Monetaria", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                                    
+                                }
+                            }
+                        }
+                    }
+                    
+                    else{
+                        JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                
+                else{
+                        JOptionPane.showMessageDialog(null,"Seleccione un metodo de pago", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            
+            else{
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de pago", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            
         
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if(servicioRbtn.isSelected()){
+                
+                concepto.removeAllItems();
+                concepto.addItem("Agua");
+                concepto.addItem("Luz");
+                concepto.addItem("Telefono");
+           
+            }
+            if(prestamoRbtn.isSelected()){              
+                idsVector=Data.getIDs(idCliente,"TypeP");
+                concepto.removeAllItems();
+                for (String string : idsVector) {
+                concepto.addItem(string);
+                }                               
+            }
+            if(creditoRbtn.isSelected()){                              
+                idsVector=Data.getIDs(idCliente,"TypeCR");
+                concepto.removeAllItems();
+                for (String string : idsVector) {
+                concepto.addItem(string);
+                }              
+            }
+            
+            //--Medio de Pago
+            
+            if(efectivoRbtn.isSelected()){
+                monto.setText("");
+                monto.setEnabled(true);               
+                idCheque.setEnabled(false);
+                tipoPago.setText("Efectivo");
+            }
+            if(chequeRbtn.isSelected()){
+                idsCheques=Data.getCheques(idCliente);
+                idCheque.removeAllItems();
+                for (String string : idsCheques) {
+                idCheque.addItem(string);
+                }     
+                idCheque.setEnabled(true);
+                tipoPago.setText("Cheque");
+            }
         }
         
     }
@@ -1430,7 +1889,7 @@ public  class TransactionModule implements MouseListener{
         JLabel limiteCreLbl = new JLabel();
         JLabel montoAdeLbl = new JLabel();
         
-        JFormattedTextField idPrestamo = new JFormattedTextField();
+        JFormattedTextField idCredito = new JFormattedTextField();
         JFormattedTextField idClienteField = new JFormattedTextField();
         JFormattedTextField fecha = new JFormattedTextField(Data.getMask("##/##/##"));
         JFormattedTextField limiteCre = new JFormattedTextField();
@@ -1486,8 +1945,8 @@ public  class TransactionModule implements MouseListener{
             
             Const.gridx=2;
             Const.gridy=1;
-            idPrestamo.setPreferredSize(new Dimension(200,20));
-            this.add(idPrestamo, Const);
+            idCredito.setPreferredSize(new Dimension(200,20));
+            this.add(idCredito, Const);
 
             Const.gridx=2;
             Const.gridy=2;
@@ -1523,7 +1982,7 @@ public  class TransactionModule implements MouseListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            auxVector[0]=idPrestamo.getText();
+            auxVector[0]=idCredito.getText();
             auxVector[1]=idClienteField.getText();
             auxVector[2]=fecha.getText();
             auxVector[3]=limiteCre.getText();
@@ -1551,6 +2010,362 @@ public  class TransactionModule implements MouseListener{
         
     }
     
+    private class Transferencias extends JPanel implements ActionListener,ChangeListener{
+        
+        JButton okBtn = new JButton();
+        
+        JLabel titleRbtn = new JLabel();
+        JLabel title2Rbtn = new JLabel();
+        
+        JLabel idTransLbl = new JLabel();
+        JLabel cuentaOrLbl = new JLabel();
+        JLabel cuentaDesLbl = new JLabel();
+        JLabel conceptoLbl = new JLabel();
+        JLabel fechaLbl = new JLabel();
+        JLabel montoLbl = new JLabel();
+        JLabel tipoLbl = new JLabel();
+             
+        JFormattedTextField idTransferencia = new JFormattedTextField();       
+        JComboBox cuentaOr = new JComboBox();
+        JFormattedTextField idCuentaDes = new JFormattedTextField(); 
+        JComboBox concepto = new JComboBox();
+        JFormattedTextField fecha = new JFormattedTextField();
+        JFormattedTextField monto = new JFormattedTextField();        
+        JFormattedTextField tipoPago = new JFormattedTextField();
+        
+        JRadioButton cuentaRbtn = new JRadioButton();
+        JRadioButton servicioRbtn = new JRadioButton();
+        JRadioButton prestamoRbtn = new JRadioButton();
+        JRadioButton creditoRbtn = new JRadioButton();
+        ButtonGroup GroupRbtn = new ButtonGroup();
+        
+        JRadioButton ahorroRbtn = new JRadioButton();
+        JRadioButton monetariaRbtn = new JRadioButton();
+        ButtonGroup Group2Rbtn = new ButtonGroup();
+        
+        String [] idsVector;
+        String [] idsCuentas;
+        String[] auxVector= new String[7];
+        String[] auxVector2=new String[4];
+        String idAgencia,typeAgencia,idCliente;
+        
+        Transferencias(String arg1,String arg2,String arg3){
+            
+            this.idAgencia=arg1;
+            this.idCliente=arg2;
+            this.typeAgencia=arg3;
+                                             
+            this.setLayout(new GridBagLayout());          
+            GridBagConstraints Const = new GridBagConstraints();
+            //CONSTANTES
+            //------------------
+            Const.weightx=0.0;
+            Const.weighty=0.0;
+            Const.insets = new Insets(5,5,5,5);
+            Const.anchor = GridBagConstraints.NORTHWEST;
+            //---------------
+            
+            //RADIO BUTTONS
+            GroupRbtn.add(cuentaRbtn);
+            GroupRbtn.add(servicioRbtn);
+            GroupRbtn.add(prestamoRbtn);
+            GroupRbtn.add(creditoRbtn);
+            
+            Group2Rbtn.add(ahorroRbtn);
+            Group2Rbtn.add(monetariaRbtn); 
+            
+            
+            Const.gridx=0;
+            Const.gridy=0;
+            titleRbtn.setText("Tipo de Transferencia:");
+            this.add(titleRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=2;
+            cuentaRbtn.setText("Cuenta de Tercero");
+            cuentaRbtn.addChangeListener(this);
+            this.add(cuentaRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=3;
+            servicioRbtn.setText("Servicios");
+            servicioRbtn.addChangeListener(this);
+            this.add(servicioRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=4;
+            prestamoRbtn.setText("Prestamo");
+            prestamoRbtn.addChangeListener(this);
+            this.add(prestamoRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=5;
+            creditoRbtn.setText("Credito");
+            creditoRbtn.addChangeListener(this);
+            this.add(creditoRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=6;
+            title2Rbtn.setText("Cuenta para Pago:");
+            this.add(title2Rbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=7;
+            ahorroRbtn.setText("Ahorros");
+            ahorroRbtn.addChangeListener(this);
+            this.add(ahorroRbtn, Const);
+            
+            Const.gridx=0;
+            Const.gridy=8;
+            monetariaRbtn.setText("Monetaria");
+            monetariaRbtn.addChangeListener(this);
+            this.add(monetariaRbtn, Const);
+            
+            
+            //CAMPOS  
+            Const.insets = new Insets(5,75,5,0);
+                     
+            Const.gridx=1;
+            Const.gridy=1;
+            idTransLbl.setText("ID Transferencia");
+            this.add(idTransLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=2;
+            cuentaOrLbl.setText("Cuenta Origen");
+            this.add(cuentaOrLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=3;
+            cuentaDesLbl.setText("Cuenta Destino");
+            this.add(cuentaDesLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=4;
+            conceptoLbl.setText("Concepto");
+            this.add(conceptoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=5;
+            fechaLbl.setText("Fecha ");
+            this.add(fechaLbl,Const);                                  
+            
+            Const.gridx=1;
+            Const.gridy=6;
+            montoLbl.setText("Monto");
+            this.add(montoLbl,Const);
+            
+            Const.gridx=1;
+            Const.gridy=7;
+            tipoLbl.setText("Tipo");
+            this.add(tipoLbl,Const);
+            
+            
+            //TEXT FIELD
+            
+            Const.gridx=2;
+            Const.gridy=1;
+            idTransferencia.setPreferredSize(new Dimension(200,20));
+            this.add(idTransferencia, Const);
+            
+            Const.gridx=2;
+            Const.gridy=2;
+            cuentaOr.setPreferredSize(new Dimension(200,20));
+            this.add(cuentaOr, Const);
+
+            Const.gridx=2;
+            Const.gridy=3;
+            idCuentaDes.setPreferredSize(new Dimension(200,20));
+            idCuentaDes.setEnabled(false);
+            this.add(idCuentaDes, Const);
+            
+            Const.gridx=2;
+            Const.gridy=4;
+            concepto.setPreferredSize(new Dimension(200,20));
+            concepto.setEnabled(false);
+            this.add(concepto, Const);
+            
+            Const.gridx=2;
+            Const.gridy=5;
+            fecha.setPreferredSize(new Dimension(200,20));
+            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setEnabled(false);
+            this.add(fecha, Const);   
+            
+            Const.gridx=2;
+            Const.gridy=6;
+            monto.setPreferredSize(new Dimension(200,20));
+            this.add(monto, Const);
+                 
+            Const.gridx=2;
+            Const.gridy=7;
+            tipoPago.setPreferredSize(new Dimension(200,20));
+            tipoPago.setEnabled(false);
+            this.add(tipoPago, Const); 
+               
+            Const.gridx=2;
+            Const.gridy=12;
+            okBtn.setText("OK");
+            okBtn.addActionListener(this);
+            this.add(okBtn,Const);
+                                 
+        }
+        
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            auxVector[0]=idTransferencia.getText();
+            auxVector[1]=(String)cuentaOr.getSelectedItem();
+            auxVector[2]=idCuentaDes.getText();
+            auxVector[3]=(String)concepto.getSelectedItem();
+            auxVector[4]=fecha.getText();
+            auxVector[5]=monto.getText();
+            auxVector[6]=tipoPago.getText();
+        if(Data.checkPK(idTransferencia.getText(), Data.oCallCenterMtx, Data.oCallCenterMtxCounter)) {   
+            if(cuentaRbtn.isSelected()){
+                if(Data.checkPK(idCuentaDes.getText(), Data.cAhorroMtx, Data.cAhorroMtxCounter)){
+                   Data.addReg(auxVector, Data.oCallCenterMtx, Data.oCallCenterMtxCounter);
+                   Data.oCallCenterMtxCounter++;
+                   Data.makeAbono(idCuentaDes.getText(), "TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                   
+                   if(ahorroRbtn.isSelected()){
+                        Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                   }
+                   else{
+                        Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                   }
+                   
+                }
+                else{
+                    JOptionPane.showMessageDialog(null,"ID Cuenta destino no existe", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+            else if(servicioRbtn.isSelected()){
+                
+                Data.addReg(auxVector, Data.oCallCenterMtx, Data.oCallCenterMtxCounter);
+                Data.oCallCenterMtxCounter++;  
+                Data.increaseTransac(idCliente, "TypeCL");
+                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                if(ahorroRbtn.isSelected()){
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                else{
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                
+            }
+            else if(prestamoRbtn.isSelected()){
+                
+                Data.addReg(auxVector, Data.oCallCenterMtx, Data.oCallCenterMtxCounter);
+                Data.oCallCenterMtxCounter++; 
+                Data.increaseTransac(idCliente, "TypeCL");
+                Data.makeAbono((String)concepto.getSelectedItem(), "TypeP",Double.parseDouble(monto.getText().replace(",","")));
+                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                if(ahorroRbtn.isSelected()){
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                else if(monetariaRbtn.isSelected()){
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                else{
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de metodo de Pago", "Error", JOptionPane.ERROR_MESSAGE);
+                }   
+                
+            }
+            else if(creditoRbtn.isSelected()){
+                
+                Data.addReg(auxVector, Data.oCallCenterMtx, Data.oCallCenterMtxCounter);
+                Data.oCallCenterMtxCounter++;
+                Data.increaseTransac(idCliente, "TypeCL");
+                Data.makeAbono((String)concepto.getSelectedItem(), "TypeCR",Double.parseDouble(monto.getText().replace(",","")));
+                JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                if(ahorroRbtn.isSelected()){
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                else if(monetariaRbtn.isSelected()){
+                     Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                }
+                else{
+                JOptionPane.showMessageDialog(null,"Seleccione un metodo de Pago", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Seleccione un tipo de Transferencia", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        }
+        else{
+                JOptionPane.showMessageDialog(null,"ID ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        
+        }
+                       
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            
+            if(cuentaRbtn.isSelected()){
+                idCuentaDes.setEnabled(true);
+                concepto.removeAllItems();
+                concepto.setEnabled(false);
+                tipoPago.setText("Transferencia");
+           
+            }
+            else if(servicioRbtn.isSelected()){
+                concepto.removeAllItems();
+                idCuentaDes.setEnabled(false);
+                idCuentaDes.setText("");
+                concepto.setEnabled(true);
+                concepto.addItem("Agua");
+                concepto.addItem("Luz");
+                concepto.addItem("Telefono");
+                tipoPago.setText("Pago de Servicios");
+           
+            }
+            else if(prestamoRbtn.isSelected()){ 
+                idCuentaDes.setEnabled(false);
+                idCuentaDes.setText("");
+                concepto.setEnabled(true);
+                idsVector=Data.getIDs(idCliente,"TypeP");
+                concepto.removeAllItems();
+                for (String string : idsVector) {
+                concepto.addItem(string);
+                } 
+                tipoPago.setText("Pago de Prestamo");
+            }
+            else if(creditoRbtn.isSelected()){ 
+                idCuentaDes.setEnabled(false);
+                idCuentaDes.setText("");
+                concepto.setEnabled(true);
+                idsVector=Data.getIDs(idCliente,"TypeCR");
+                concepto.removeAllItems();
+                for (String string : idsVector) {
+                concepto.addItem(string);
+                }    
+                tipoPago.setText("Pago de Credito");
+            }
+            
+            //--Medio de Pago
+            
+            if(ahorroRbtn.isSelected()){
+                cuentaOr.removeAllItems();
+                idsCuentas=Data.getIDs(idCliente, "TypeAH");
+                for (String string : idsCuentas) {
+                cuentaOr.addItem(string);
+                } 
+            }
+            else if(monetariaRbtn.isSelected()){
+                cuentaOr.removeAllItems();
+                idsCuentas=Data.getIDs(idCliente, "TypeM");
+                for (String string : idsCuentas) {
+                cuentaOr.addItem(string);
+                } 
+            }
+        }
+        
+    }
     
     
     }

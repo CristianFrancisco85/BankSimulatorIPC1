@@ -19,10 +19,11 @@ public class MainFrame extends JFrame  {
     
     Container ContentPane = getContentPane();
     JPanel SideMenu = new JPanel();
-    JButton adminBtn,transBtn,reportBtn;
+    JButton adminBtn,transBtn,reportBtn,saleBtn;
     AdminModule Administrator = new AdminModule();
     TransactionModule Transaction = new TransactionModule();
     ReportsModule Reports = new ReportsModule();
+    Compras ComprasFrame = new Compras();
     
     MainFrame(){
         //Configuracion de MainFrame
@@ -59,6 +60,11 @@ public class MainFrame extends JFrame  {
         reportBtn.addActionListener(new ReportBtn());
         SideMenu.add(reportBtn);
         
+        saleBtn = this.newBtn("Compras");
+        saleBtn.setToolTipText("Simular Compra");
+        saleBtn.addActionListener(new saleBtn());
+        SideMenu.add(reportBtn);
+        
         this.setVisible(true);   
         
     }
@@ -93,6 +99,7 @@ public class MainFrame extends JFrame  {
         
         Reports.ReportFrame.dispose();
         Transaction.TransactionFrame.dispose();
+        ComprasFrame.dispose();
         
         ContentPane.revalidate();
         ContentPane.repaint();      
@@ -108,6 +115,7 @@ public class MainFrame extends JFrame  {
         reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         Reports.ReportFrame.dispose();
         Administrator.AdminFrame.dispose();
+        ComprasFrame.dispose();
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }
@@ -121,7 +129,23 @@ public class MainFrame extends JFrame  {
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
         Transaction.TransactionFrame.dispose();
-        Administrator.AdminFrame.dispose();       
+        Administrator.AdminFrame.dispose(); 
+        ComprasFrame.dispose();
+        ContentPane.revalidate();
+        ContentPane.repaint(); 
+        }
+    }
+    
+    class saleBtn implements ActionListener {
+        public void actionPerformed(ActionEvent e){
+        ContentPane.add(ComprasFrame, BorderLayout.CENTER);
+        ComprasFrame.setVisible(true);
+        
+        adminBtn.setBackground(new java.awt.Color(17, 120, 204));
+        transBtn.setBackground(new java.awt.Color(17, 120, 204));
+        Transaction.TransactionFrame.dispose();
+        Administrator.AdminFrame.dispose();
+        Reports.ReportFrame.dispose();
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }

@@ -1200,7 +1200,7 @@ public class AdminModule  {
 
     class TarjetaCreditoPanel extends JPanel implements MouseListener{
         
-        private  String[] columnNames = {"ID","ID Cliente","Fecha de Solicitud", "Monto Prestado","Monto Abonado"};
+        private  String[] columnNames = {"ID","ID Cliente","Fecha de Vencimiento", "Limite Credito","Monto Abonado"};
         String[] auxVector= new String[5];
 
         private Object[][] tableData = Data.sCreditoMtx;
