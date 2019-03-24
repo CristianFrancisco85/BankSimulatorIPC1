@@ -1,5 +1,13 @@
 package banksimulator;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -10,8 +18,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -22,6 +37,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
 
@@ -55,6 +73,8 @@ public class AdminModule  {
         TabbedPane.addTab("Prestamos", new PrestamosPanel());
         //Panel 7 -- Empleados
         TabbedPane.addTab("Empleados", new EmpleadosPanel());
+        //Panel 8 -- Reportes
+        TabbedPane.addTab("Reportes", new ReportesPanel());
 
     }
 
@@ -843,7 +863,7 @@ public class AdminModule  {
         JFormattedTextField idCajero = new JFormattedTextField(new Integer(0));
         JFormattedTextField ubicacionCajero = new JFormattedTextField();
         JFormattedTextField efectivoCajero = new JFormattedTextField(new Double(0.00));
-        JFormattedTextField estadoCajero = new JFormattedTextField();
+        JComboBox estadoCajero = new JComboBox();
         JFormattedTextField numtransCajero = new JFormattedTextField();
 
         JRadioButton delRbtn = new JRadioButton();
@@ -945,6 +965,8 @@ public class AdminModule  {
             Const.gridx = 2;
             Const.gridy = 4;
             estadoCajero.setPreferredSize(new Dimension(200, 20));
+            estadoCajero.addItem("Activo");
+            estadoCajero.addItem("Inactivo");
             this.add(estadoCajero, Const);
 
             Const.gridx = 2;
@@ -982,7 +1004,7 @@ public class AdminModule  {
                 auxVector[0] = idCajero.getText();
                 auxVector[1] = ubicacionCajero.getText();
                 auxVector[2] = efectivoCajero.getText();
-                auxVector[3] = estadoCajero.getText();
+                auxVector[3] = (String)estadoCajero.getSelectedItem();
                 auxVector[4] = numtransCajero.getText();
 
                 Data.addReg(auxVector, Data.CajerosMtx, Data.CajerosMtxCounter);
@@ -999,16 +1021,16 @@ public class AdminModule  {
                 auxVector[0] = idCajero.getText();
                 auxVector[1] = ubicacionCajero.getText();
                 auxVector[2] = efectivoCajero.getText();
-                auxVector[3] = estadoCajero.getText();
+                auxVector[3] = (String)estadoCajero.getSelectedItem();
                 auxVector[4] = numtransCajero.getText();
                 Data.CajerosMtx = Data.editReg(idCajero.getText(), auxVector, Data.CajerosMtx, Data.CajerosMtxCounter);
             } else if (readRbtn.isSelected()) {
-
+                estadoCajero.removeAllItems();
                 auxVector = Data.readReg(idCajero.getText(), Data.CajerosMtx, Data.CajerosMtxCounter);
                 idCajero.setText(auxVector[0]);
                 ubicacionCajero.setText(auxVector[1]);
                 efectivoCajero.setText(auxVector[2]);
-                estadoCajero.setText(auxVector[3]);
+                estadoCajero.addItem(auxVector[3]);
                 numtransCajero.setText(auxVector[4]);
             } else {
                 JOptionPane.showMessageDialog(null, "Selecciones un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1028,11 +1050,12 @@ public class AdminModule  {
         JLabel areaLbl = new JLabel();
         JLabel departamentoLbl = new JLabel();
         
+        private final String[] lugaresMtx = {"Agencia Bancaria","Agencia con AutoBanco","Call-Center","Oficinas Centrales"};
 
         JFormattedTextField idEmpleado = new JFormattedTextField(new Integer(0));
         JFormattedTextField nombreEmpleado = new JFormattedTextField(new String(""));
-        JFormattedTextField areaEmpleado = new JFormattedTextField(new String(""));
-        JFormattedTextField subareaEmpleado = new JFormattedTextField();
+        JComboBox areaEmpleado = new JComboBox(lugaresMtx);
+        JComboBox subareaEmpleado = new JComboBox();
 
         JRadioButton delRbtn = new JRadioButton();
         JRadioButton addRbtn = new JRadioButton();
@@ -1040,9 +1063,8 @@ public class AdminModule  {
         JRadioButton readRbtn = new JRadioButton();
 
         ButtonGroup GroupRbtn = new ButtonGroup();
-        String[] auxVector = new String[4];
-        private final String[] lugaresMtx = {"Agencia Bancaria","Agencia con AutoBanco","Call-Center","Oficinas Centrales"};
-        private final String[] columnNames = {""};
+        String[] auxVector = new String[4];       
+        private  String[] IDsVector;
         
         
         EmpleadosPanel() {
@@ -1125,7 +1147,8 @@ public class AdminModule  {
 
             Const.gridx = 2;
             Const.gridy = 3;
-            areaEmpleado.setPreferredSize(new Dimension(200, 20));
+            areaEmpleado.setPreferredSize(new Dimension(200, 20)); 
+            areaEmpleado.addActionListener(this);
             this.add(areaEmpleado, Const);
 
             Const.gridx = 2;
@@ -1144,6 +1167,41 @@ public class AdminModule  {
         
         @Override
         public void actionPerformed(ActionEvent e) {
+            
+        if(e.getSource().equals(areaEmpleado)){
+            JComboBox cb = (JComboBox)e.getSource();
+            String area = (String)cb.getSelectedItem();
+            switch(area){
+                case"Agencia Bancaria":
+                        IDsVector=Data.getColumn(Data.AgenciasMtx, 0, Data.AgenciasMtxCounter);
+                        subareaEmpleado.removeAllItems();
+                        for (String string : IDsVector) {
+                        subareaEmpleado.addItem(string);
+                        }
+                    break;
+                case"Agencia con AutoBanco":
+                        IDsVector=Data.getColumn(Data.AgenciasAutoMtx, 0, Data.AgenciasAutoMtxCounter);
+                        subareaEmpleado.removeAllItems();
+                        for (String string : IDsVector) {
+                        subareaEmpleado.addItem(string);
+                        }
+                    break;
+                case"Call-Center":
+                        subareaEmpleado.removeAllItems();
+                        subareaEmpleado.addItem("N/A");
+                    break;
+                case"Oficinas Centrales":
+                    subareaEmpleado.removeAllItems();
+                    subareaEmpleado.addItem("Gerencia");
+                    subareaEmpleado.addItem("Departamento de Marketing");
+                    subareaEmpleado.addItem("Departamento de Informatica");
+                    subareaEmpleado.addItem("Departamento Financiero");
+                    subareaEmpleado.addItem("Departamento de Reclamos");
+                    subareaEmpleado.addItem("Departamento de Cobros");
+                    break;
+            }
+        }
+        else{    
 
             if (delRbtn.isSelected()) {
 
@@ -1161,8 +1219,8 @@ public class AdminModule  {
 
                 auxVector[0] = idEmpleado.getText();
                 auxVector[1] = nombreEmpleado.getText();
-                auxVector[2] = areaEmpleado.getText();
-                auxVector[3] = subareaEmpleado.getText();
+                auxVector[2] = (String)areaEmpleado.getSelectedItem();
+                auxVector[3] = (String)subareaEmpleado.getSelectedItem();
 
                 Data.addReg(auxVector, Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
 
@@ -1177,25 +1235,24 @@ public class AdminModule  {
 
                 auxVector[0] = idEmpleado.getText();
                 auxVector[1] = nombreEmpleado.getText();
-                auxVector[2] = areaEmpleado.getText();
-                auxVector[3] = subareaEmpleado.getText();
+                auxVector[2] = (String)areaEmpleado.getSelectedItem();
+                auxVector[3] = (String)subareaEmpleado.getSelectedItem();
                 Data.EmpleadosMtx = Data.editReg(idEmpleado.getText(), auxVector, Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
                 
             } else if (readRbtn.isSelected()) {
-
+                areaEmpleado.removeAllItems();
+                subareaEmpleado.removeAllItems();
                 auxVector = Data.readReg(idEmpleado.getText(), Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
                 idEmpleado.setText(auxVector[0]);
                 nombreEmpleado.setText(auxVector[1]);
-                areaEmpleado.setText(auxVector[2]);
-                subareaEmpleado.setText(auxVector[3]);
+                areaEmpleado.addItem(auxVector[2]);
+                subareaEmpleado.addItem(auxVector[3]);
             } else {
                 JOptionPane.showMessageDialog(null, "Selecciones un tipo de consulta", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
-        }
-        
-        
-
+        }        
+        }             
     }
 
     class TarjetaCreditoPanel extends JPanel implements MouseListener{
@@ -1339,6 +1396,559 @@ public class AdminModule  {
 
     }
 
+    class ReportesPanel extends JPanel implements ActionListener,MouseListener{
+        
+        JButton rutaBtn = new JButton();
+        JButton genBtn = new JButton();
+
+        JTextField rutaText = new JTextField();
+        JComboBox reporteCombo = new JComboBox();
+        
+        private final  String[] columnNames = {"ID","Nombre","Direccion", "Telefono","Cuentas de Ahorro","Cuentas Monetarias","Prestamos","Tarjetas de Credito","Transacciones"};
     
+        private Object[][] tableData = Data.ClientesMtx;
+        private JTable tablaClientes =  new JTable(tableData,columnNames);
+        String [] auxVector;
+        
+        Paragraph column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11,column12;
+        PdfPTable Tabla1;
+        PdfPCell titleCell;
+
+        ReportesPanel(){
+            
+            this.setLayout(new GridBagLayout());
+            GridBagConstraints Const = new GridBagConstraints();            
+
+            //CONSTANTES
+            //------------------
+            Const.weightx = 0.0;
+            Const.weighty = 0.0;
+            Const.insets = new Insets(5, 5, 5, 5);
+            Const.anchor = GridBagConstraints.NORTHWEST;
+            //---------------
+            
+            //Text Area
+            Const.gridx = 0;
+            Const.gridy = 0;
+            rutaText.setPreferredSize(new Dimension(350, 30));
+            rutaText.setEditable(false);
+            rutaText.setText("");
+            this.add(rutaText, Const);
+            
+            Const.gridx = 0;
+            Const.gridy = 1;
+            reporteCombo.setPreferredSize(new Dimension(350, 30));
+            reporteCombo.addItem("Agencias");
+            reporteCombo.addItem("Cajeros");
+            reporteCombo.addItem("Clientes");
+            reporteCombo.addItem("Top 3 Clientes con mas cuentas");
+            reporteCombo.addItem("Top 3 Clientes con mas dinero");
+            reporteCombo.addItem("Top 3 Clientes con mas deudas");
+            reporteCombo.addItem("Top 3 Agencias mas Utilizadas");
+            reporteCombo.addItem("Top 2 Operaciones en Call-Center");
+            reporteCombo.addItem("Sumatoria de efectivo en agencias");
+            reporteCombo.addItem("Monto de efectivo por agencia");
+            reporteCombo.addItem("Listado de Empleados de cada Agencia");
+            reporteCombo.addItem("Listado de Empleados en Oficinas Centrales");
+            reporteCombo.addItem("Agencia con mayor numero de Empleados");
+            reporteCombo.addItem("Top 3 Clientes con mas compras al credito");
+            this.add(reporteCombo, Const);
+            
+            //Buttons
+            Const.gridx = 1;
+            Const.gridy = 0;
+            rutaBtn.setText("Elegir Ruta...");
+            rutaBtn.addActionListener(this);
+            this.add(rutaBtn,Const);
+            
+            Const.gridx = 1;
+            Const.gridy = 1;
+            genBtn.setText("Generar Reporte");
+            genBtn.addActionListener(this);
+            this.add(genBtn,Const);
+            
+            Const.gridx = 1;
+            Const.gridy = 2;
+            tablaClientes.addMouseListener(this);
+            this.add(new JScrollPane(tablaClientes),Const);
+            
+        
+        }
+        
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            if(e.getSource().equals(rutaBtn)){
+                JFileChooser FileDialog = new JFileChooser();
+                int option = FileDialog.showSaveDialog(this);
+                if(option == JFileChooser.APPROVE_OPTION){
+                    File Ruta = FileDialog.getSelectedFile();
+                    rutaText.setText(Ruta.toString());
+                }
+            }
+            if(e.getSource().equals(genBtn)){
+                
+                switch((String)reporteCombo.getSelectedItem()){
+                    
+                case"Agencias":
+                    
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Agencias y AgenciasAuto">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Agencias",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Agencias-------------------------------
+                        Tabla1 = new PdfPTable(8);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Agencias"));
+                        titleCell.setColspan(8);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Direccion",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Telefono",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column5= new Paragraph("Cantidad Cajeros",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column6= new Paragraph("Cantidad Escritorios",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column7= new Paragraph("Efectivo",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column8= new Paragraph("Transacciones",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                        Tabla1.addCell(column5);
+                        Tabla1.addCell(column6);
+                        Tabla1.addCell(column7);
+                        Tabla1.addCell(column8);
+                                                                        
+                        auxVector = new String [8];
+                        
+                        for(int i=0;i<Data.AgenciasMtxCounter;i++){
+                            auxVector=Data.readReg(Data.AgenciasMtx[i][0], Data.AgenciasMtx, Data.AgenciasMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[2]);
+                            Tabla1.addCell(auxVector[3]);
+                            Tabla1.addCell(auxVector[4]); 
+                            Tabla1.addCell(auxVector[5]);
+                            Tabla1.addCell(auxVector[6]);
+                            Tabla1.addCell(auxVector[7]);                          
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------
+                    // ----------------------------TABLA 2 - Agencias Auto Banco------------
+                        Tabla1 = new PdfPTable(9);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Agencias con AutoBanco"));
+                        titleCell.setColspan(9);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Direccion",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Telefono",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column5= new Paragraph("Cantidad Cajeros",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column6= new Paragraph("Cantidad Escritorios",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column7= new Paragraph("Efectivo",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column8= new Paragraph("AutoBancon",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column9= new Paragraph("Transacciones",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                        Tabla1.addCell(column5);
+                        Tabla1.addCell(column6);
+                        Tabla1.addCell(column7);
+                        Tabla1.addCell(column8);
+                        Tabla1.addCell(column9);
+                        
+                        auxVector = new String [9];
+                        
+                        for(int i=0;i<Data.AgenciasAutoMtxCounter;i++){
+                            auxVector=Data.readReg(Data.AgenciasAutoMtx[i][0], Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[2]);
+                            Tabla1.addCell(auxVector[3]);
+                            Tabla1.addCell(auxVector[4]); 
+                            Tabla1.addCell(auxVector[5]);
+                            Tabla1.addCell(auxVector[6]);
+                            Tabla1.addCell(auxVector[7]);
+                            Tabla1.addCell(auxVector[8]);
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------FIN TABLA2-----------------------------                       
+                        
+                        
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    } 
+                    
+                    break;
+                    
+                case"Cajeros":
+                    
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Cajeros Automaticos">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Cajeros",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Cajeros Automaticos -------------------------------
+                        Tabla1 = new PdfPTable(5);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Cajeros - ATM"));
+                        titleCell.setColspan(5);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Ubicacion",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Efectivo",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Estado",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column5= new Paragraph("Transacciones",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                        Tabla1.addCell(column5);
+
+                                                                        
+                        auxVector = new String [5];
+                        
+                        for(int i=0;i<Data.CajerosMtxCounter;i++){
+                            auxVector=Data.readReg(Data.CajerosMtx[i][0], Data.CajerosMtx, Data.CajerosMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[2]);
+                            Tabla1.addCell(auxVector[3]);
+                            Tabla1.addCell(auxVector[4]); 
+                             
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                             
+                        
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    
+                    break;
+                    
+                case"Clientes":
+                    
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Clientes">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Clientes",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Clientes-------------------------------
+                        Tabla1 = new PdfPTable(9);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Clientes"));
+                        titleCell.setColspan(9);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Direccion",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Telefono",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column5= new Paragraph("Cuentas Ahorro",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column6= new Paragraph("Cuentas Monetarias",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column7= new Paragraph("Prestamos",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column8= new Paragraph("Creditos",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column9= new Paragraph("Transacciones",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                        Tabla1.addCell(column5);
+                        Tabla1.addCell(column6);
+                        Tabla1.addCell(column7);
+                        Tabla1.addCell(column8);
+                        Tabla1.addCell(column9);
+                                                                        
+                        auxVector = new String [9];
+                        
+                        for(int i=0;i<Data.ClientesMtxCounter;i++){
+                            auxVector=Data.readReg(Data.ClientesMtx[i][0], Data.ClientesMtx, Data.ClientesMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[2]);
+                            Tabla1.addCell(auxVector[3]);
+                            Tabla1.addCell(auxVector[4]); 
+                            Tabla1.addCell(auxVector[5]);
+                            Tabla1.addCell(auxVector[6]);
+                            Tabla1.addCell(auxVector[7]);     
+                            Tabla1.addCell(auxVector[8]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    } 
+                    
+                    break;
+                case"Top 3 Clientes con mas cuentas":
+                    break;
+                case"Top 3 Clientes con mas dinero":
+                    break;
+                case"Top 3 Clientes con mas deudas":
+                    break;
+                case"Top 3 Agencias mas Utilizadas":
+                    break;
+                case"Top 2 Operaciones en Call-Center":
+                    break;
+                case"Sumatoria de efectivo en agencias":
+                    
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Sumatoria Efectivo">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Sumatoria de Efectivo en Agencias",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                        auxVector=Data.getColumn(Data.AgenciasMtx, 6, Data.AgenciasMtxCounter);
+                        double total=0;
+                        for(int i=0;i<auxVector.length;i++){
+                            total=Double.parseDouble(auxVector[i].replace(",", ""))+total;
+                        }
+                        auxVector=Data.getColumn(Data.AgenciasAutoMtx, 6, Data.AgenciasAutoMtxCounter);
+                        double total2=0;
+                        for(int i=0;i<auxVector.length;i++){
+                            total=Double.parseDouble(auxVector[i].replace(",", ""))+total;
+                        }
+                        
+                        Report.add(new Paragraph("Agencias: TOTAL= "+total,FontFactory.getFont(FontFactory.HELVETICA,15,BaseColor.BLACK)));
+                        Report.add(new Paragraph("Agencias con AutoBanco: TOTAL= "+total2,FontFactory.getFont(FontFactory.HELVETICA,15,BaseColor.BLACK)));                                                                  
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    
+                    break;
+                case"Monto de efectivo por agencia":
+                    
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Monto por Agencia">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Efectivo por Agencia",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - AgenciasEfectivo-------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Agencias"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Efectivo",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                    
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                                                                       
+                        auxVector = new String [8];
+                        
+                        for(int i=0;i<Data.AgenciasMtxCounter;i++){
+                            auxVector=Data.readReg(Data.AgenciasMtx[i][0], Data.AgenciasMtx, Data.AgenciasMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[6]);                           
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------
+                    // ----------------------------TABLA 2 - Agencias Auto Banco------------
+                        Tabla1 = new PdfPTable(9);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Agencias con AutoBanco"));
+                        titleCell.setColspan(9);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Efectivo",FontFactory.getFont(FontFactory.HELVETICA,12));
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        auxVector = new String [9];
+                        
+                        for(int i=0;i<Data.AgenciasAutoMtxCounter;i++){
+                            auxVector=Data.readReg(Data.AgenciasAutoMtx[i][0], Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector[6]);
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------FIN TABLA2-----------------------------
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                                       
+                    break;
+                case"Listado de Empleados de cada Agencia":
+                    break;
+                case"Listado de Empleados en Oficinas Centrales":
+                    break;
+                case"Agencia con mayor numero de Empleados":
+                    break;
+                case"Top 3 Clientes con mas compras al credito":
+                    break;                   
+                    
+                }
+                
+                
+                
+                
+            }
+            
+        
+        
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            
+            if(e.getClickCount()>0){
+                Point point = e.getPoint();
+                int row = tablaClientes.rowAtPoint(point);
+                TableModel model = tablaClientes.getModel();
+                String IDCliente=String.valueOf(model.getValueAt(row,0));
+                
+                try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - ClientesCuentas">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Cliente - ID: "+IDCliente,FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                                                               
+                        auxVector = new String [9];                       
+                        auxVector=Data.readReg(IDCliente, Data.ClientesMtx, Data.ClientesMtxCounter);
+                        Report.add(new Paragraph("Cuentas de Ahorro: "+auxVector[4]));
+                        Report.add(new Paragraph("Cuentas de Monetarias: "+auxVector[5]));
+                        Report.add(new Paragraph("IDs Prestamos: "+auxVector[6]));
+                        Report.add(new Paragraph("IDs Creditos: "+auxVector[7]));
+                                                                                            
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                 
+                
+            }
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+        
+    }
       
 }

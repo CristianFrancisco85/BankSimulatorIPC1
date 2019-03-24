@@ -41,9 +41,9 @@ public  class TransactionModule implements MouseListener{
     private final String[] lugaresMtx = {"Agencia Bancaria","Agencia con AutoBanco","Cajero Automatico","Call-Center"};
     
     private Object[][] tableData = Data.ClientesMtx;
-    
-    public JInternalFrame TransactionFrame = new JInternalFrame("Modulo de Transacciones",true,true,false,true);
     private JTable tablaClientes =  new JTable(tableData,columnNames);
+    
+    public JInternalFrame TransactionFrame = new JInternalFrame("Modulo de Transacciones",true,true,false,true);   
     
     TransactionModule(){
         
@@ -90,8 +90,7 @@ public  class TransactionModule implements MouseListener{
                 
                 case "Agencia con AutoBanco":
                     IDPlace = (String) JOptionPane.showInputDialog(null,"¿De que agencia viene?","AgenciasAuto",
-                    JOptionPane.DEFAULT_OPTION,null,Data.getColumn(Data.AgenciasAutoMtx,0,Data.AgenciasAutoMtxCounter),Data.AgenciasAutoMtx[0][0]);
-                    
+                    JOptionPane.DEFAULT_OPTION,null,Data.getColumn(Data.AgenciasAutoMtx,0,Data.AgenciasAutoMtxCounter),Data.AgenciasAutoMtx[0][0]);                    
                     Window.TabbedPane.addTab("Retiro", new Retiro(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Deposito", new Deposito(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Cambio de Cheques", new CambioCheques(IDPlace,IDCliente,"TypeB"));
@@ -101,15 +100,21 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Pagos", new Pagos(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeB"));
                     Window.TabbedPane.add("Apertura Cuentas", new AbrirCts(IDPlace,IDCliente,"TypeB"));
-                    Window.setVisible(true);
+                    Window.setVisible(true);                    
                 break;
                 
                 case "Cajero Automatico":
                     IDPlace = (String) JOptionPane.showInputDialog(null,"¿De que cajero viene?","Cajeros",
                     JOptionPane.DEFAULT_OPTION,null,Data.getColumn(Data.CajerosMtx,0,Data.CajerosMtxCounter),Data.CajerosMtx[0][0]);
+                    String[] temp=Data.readReg(IDPlace, Data.CajerosMtx, Data.CajerosMtxCounter);
+                    if(temp[3].equals("Activo")){
                     Window.TabbedPane.addTab("Retiro", new Retiro(IDPlace,IDCliente,"TypeC"));
                     Window.TabbedPane.addTab("Consulta", new Consulta(IDPlace,IDCliente,"TypeC"));
                     Window.setVisible(true);
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null,"Cajero Inactivo", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
                 break;
                 
                 case "Call-Center":                   
@@ -303,7 +308,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=3;
             fechaAp.setPreferredSize(new Dimension(200,20));
-            fechaAp.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fechaAp.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fechaAp.setEnabled(false);
             this.add(fechaAp, Const);           
             
@@ -479,7 +484,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=4;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const);
           
@@ -811,7 +816,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=3;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const);   
             
@@ -1014,7 +1019,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=3;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const); 
             
@@ -1287,7 +1292,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=5;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const);   
                     
@@ -1333,6 +1338,7 @@ public  class TransactionModule implements MouseListener{
                         if(Double.parseDouble(auxVector2[3].replace(",",""))<= Double.parseDouble(monto.getText().replace(",",""))){
                           Data.delReg((String)idCheque.getSelectedItem(), Data.ChequesMtx, Data.ChequesMtxCounter);
                           Data.ChequesMtxCounter--;
+                          Data.makeAbono(idAgencia, typeAgencia, Double.parseDouble(monto.getText().replace(",","")));
                           Data.addReg(auxVector, Data.PagosMtx, Data.PagosMtxCounter); 
                           Data.PagosMtxCounter++;
                           Data.increaseTransac(idAgencia, typeAgencia);
@@ -1359,12 +1365,14 @@ public  class TransactionModule implements MouseListener{
                                     cuentas=Data.getIDs(idCliente, "TypeAH");
                                     respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
                                     Data.makeAbono(respuesta2, "TypeAH", diferencia);
+                                    Data.makeAbono(idAgencia, typeAgencia, diferencia);
                                     JOptionPane.showMessageDialog(null,"Depositado a Cuenta de Ahorro", "Succes", JOptionPane.INFORMATION_MESSAGE);
                                 }
                                 else{
                                     cuentas=Data.getIDs(idCliente, "TypeM");
                                     respuesta2=(String)JOptionPane.showInputDialog(null, "Seleccione una cuenta", "Cuenta", JOptionPane.DEFAULT_OPTION,null,cuentas,cuentas[0]);
                                     Data.makeAbono(respuesta2, "TypeM", diferencia);
+                                    Data.makeAbono(idAgencia, typeAgencia, diferencia);
                                     JOptionPane.showMessageDialog(null,"Depositado a Cuenta Monetaria", "Succes", JOptionPane.INFORMATION_MESSAGE);
                                     
                                 }
@@ -1825,7 +1833,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=3;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const);   
             
@@ -2082,7 +2090,7 @@ public  class TransactionModule implements MouseListener{
             
             Const.gridx=0;
             Const.gridy=2;
-            cuentaRbtn.setText("Cuenta de Tercero");
+            cuentaRbtn.setText("Cuenta");
             cuentaRbtn.addChangeListener(this);
             this.add(cuentaRbtn, Const);
             
@@ -2188,7 +2196,7 @@ public  class TransactionModule implements MouseListener{
             Const.gridx=2;
             Const.gridy=5;
             fecha.setPreferredSize(new Dimension(200,20));
-            fecha.setText(new SimpleDateFormat("dd-mm-yyyy").format(new Date()));
+            fecha.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
             fecha.setEnabled(false);
             this.add(fecha, Const);   
             
@@ -2221,7 +2229,7 @@ public  class TransactionModule implements MouseListener{
             auxVector[4]=fecha.getText();
             auxVector[5]=monto.getText();
             auxVector[6]=tipoPago.getText();
-        if(Data.checkPK(idTransferencia.getText(), Data.oCallCenterMtx, Data.oCallCenterMtxCounter)) {   
+        if(!Data.checkPK(idTransferencia.getText(), Data.oCallCenterMtx, Data.oCallCenterMtxCounter)) {   
             if(cuentaRbtn.isSelected()){
                 if(Data.checkPK(idCuentaDes.getText(), Data.cAhorroMtx, Data.cAhorroMtxCounter)){
                    Data.addReg(auxVector, Data.oCallCenterMtx, Data.oCallCenterMtxCounter);

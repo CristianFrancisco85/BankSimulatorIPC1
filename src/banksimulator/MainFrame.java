@@ -34,7 +34,7 @@ public class MainFrame extends JFrame  {
         ContentPane.setLayout(new BorderLayout());
         ContentPane.setBackground(new java.awt.Color(238, 238, 238));
         ContentPane.add(SideMenu, BorderLayout.WEST);
-
+        
         SideMenu.setBackground(new java.awt.Color(19, 137, 223));
         SideMenu.setVisible(true);
         SideMenu.setLayout(new GridLayout(10,0,0,8));
