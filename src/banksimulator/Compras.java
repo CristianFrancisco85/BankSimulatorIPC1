@@ -26,13 +26,13 @@ public class Compras extends JInternalFrame implements MouseListener {
     private String[] IDsCredito,auxVector;
     private double monto;
     private boolean control; 
+    String[] auxcompras = new String[2];
     
     Compras(){
         this.setTitle("Simulador de Compras");
         tablaClientes.addMouseListener(this);
         this.add(new JScrollPane(tablaClientes),BorderLayout.CENTER);
-        
-        
+               
     }
 
     @Override
@@ -72,6 +72,10 @@ public class Compras extends JInternalFrame implements MouseListener {
             if(monto<=disponible){
                 Data.makeDebito(resp, "TypeCR", monto);
                 JOptionPane.showMessageDialog(this,"Compra Realizada", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                auxcompras[0]=Integer.toString(Data.ComprasMtxCounter);
+                auxcompras[1]=IDCliente;
+                Data.addReg(auxcompras, Data.ComprasMtx, Data.ComprasMtxCounter);
+                Data.ComprasMtxCounter++;
             }
             else{
                 JOptionPane.showMessageDialog(this,"Monto Supera Limite de Credito", "Warning", JOptionPane.WARNING_MESSAGE);

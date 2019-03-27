@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -19,10 +20,9 @@ public class MainFrame extends JFrame  {
     
     Container ContentPane = getContentPane();
     JPanel SideMenu = new JPanel();
-    JButton adminBtn,transBtn,reportBtn,saleBtn;
+    JButton adminBtn,transBtn,saleBtn;
     AdminModule Administrator = new AdminModule();
     TransactionModule Transaction = new TransactionModule();
-    ReportsModule Reports = new ReportsModule();
     Compras ComprasFrame = new Compras();
     
     MainFrame(){
@@ -52,14 +52,9 @@ public class MainFrame extends JFrame  {
         transBtn.setToolTipText("Realizar Transacciones");
         transBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/transaction.png")));
         transBtn.addActionListener(new TransBtn());
-        SideMenu.add(transBtn); 
+        SideMenu.add(transBtn);        
         
-        //Configuracion Boton "Reportes"
-        reportBtn = this.newBtn("Reportes");
-        reportBtn.setToolTipText("Creacion de Reportes");
-        reportBtn.addActionListener(new ReportBtn());
-        SideMenu.add(reportBtn);
-        
+        //Configuracion Boton "Compras"
         saleBtn = this.newBtn("Compras");
         saleBtn.setToolTipText("Simular Compra");
         saleBtn.addActionListener(new saleBtn());
@@ -91,19 +86,27 @@ public class MainFrame extends JFrame  {
     
     class AdminBtn implements ActionListener {
         public void actionPerformed(ActionEvent e){
-            
-        ContentPane.add(Administrator.AdminFrame, BorderLayout.CENTER);
-        Administrator.AdminFrame.show();        
-        reportBtn.setBackground(new java.awt.Color(17, 120, 204));
-        transBtn.setBackground(new java.awt.Color(17, 120, 204));
-        saleBtn.setBackground(new java.awt.Color(17, 120, 204));
         
-        Reports.ReportFrame.dispose();
-        Transaction.TransactionFrame.dispose();
-        ComprasFrame.dispose();
-        
-        ContentPane.revalidate();
-        ContentPane.repaint();      
+            String user = JOptionPane.showInputDialog(ContentPane,"Ingrese Uuario", "Login",JOptionPane.QUESTION_MESSAGE);
+            String password = JOptionPane.showInputDialog(ContentPane,"Ingrese Contraseña", "Login",JOptionPane.QUESTION_MESSAGE);
+
+            if(user.equals("admin") && password.equals("123")){
+               ContentPane.add(Administrator.AdminFrame, BorderLayout.CENTER);
+               Administrator.AdminFrame.show();        
+               transBtn.setBackground(new java.awt.Color(17, 120, 204));
+               saleBtn.setBackground(new java.awt.Color(17, 120, 204));
+
+               Transaction.TransactionFrame.dispose();
+               ComprasFrame.dispose();
+
+               ContentPane.revalidate();
+               ContentPane.repaint();    
+            }
+            else{
+                JOptionPane.showMessageDialog(ContentPane, "Credenciales Invalidos", "Login", JOptionPane.ERROR_MESSAGE);
+
+            }
+             
         }
     }
     
@@ -113,31 +116,13 @@ public class MainFrame extends JFrame  {
         Transaction.TransactionFrame.show();
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
-        reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         saleBtn.setBackground(new java.awt.Color(17, 120, 204));
-        Reports.ReportFrame.dispose();
         Administrator.AdminFrame.dispose();
         ComprasFrame.dispose();
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }
-    }
-    
-    class ReportBtn implements ActionListener {
-        public void actionPerformed(ActionEvent e){
-        ContentPane.add(Reports.ReportFrame, BorderLayout.CENTER);
-        Reports.ReportFrame.show();
-        
-        adminBtn.setBackground(new java.awt.Color(17, 120, 204));
-        transBtn.setBackground(new java.awt.Color(17, 120, 204));
-        saleBtn.setBackground(new java.awt.Color(17, 120, 204));
-        Transaction.TransactionFrame.dispose();
-        Administrator.AdminFrame.dispose(); 
-        ComprasFrame.dispose();
-        ContentPane.revalidate();
-        ContentPane.repaint(); 
-        }
-    }
+    }   
     
     class saleBtn implements ActionListener {
         public void actionPerformed(ActionEvent e){
@@ -146,10 +131,8 @@ public class MainFrame extends JFrame  {
         
         adminBtn.setBackground(new java.awt.Color(17, 120, 204));
         transBtn.setBackground(new java.awt.Color(17, 120, 204));
-        reportBtn.setBackground(new java.awt.Color(17, 120, 204));
         Transaction.TransactionFrame.dispose();
         Administrator.AdminFrame.dispose();
-        Reports.ReportFrame.dispose();
         ContentPane.revalidate();
         ContentPane.repaint(); 
         }

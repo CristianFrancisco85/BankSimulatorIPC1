@@ -293,7 +293,7 @@ public class AdminModule  {
                 auxVector[5] = ctsmonetariasCliente.getText();
                 auxVector[6] = prestamosCliente.getText();
                 auxVector[7] = tjtcreditoCliente.getText();
-                auxVector[8] = transaccionesCliente.getText();
+                auxVector[8] = "0";
 
                 Data.addReg(auxVector, Data.ClientesMtx, Data.ClientesMtxCounter);
 
@@ -559,7 +559,7 @@ public class AdminModule  {
                 auxVector[4] = numcajasAgencia.getText();
                 auxVector[5] = numescritoriosAgencia.getText();
                 auxVector[6] = efectivoAgencia.getText();
-                auxVector[7] = numtransacAgencia.getText();
+                auxVector[7] = "0";
 
                 Data.addReg(auxVector, Data.AgenciasMtx, Data.AgenciasMtxCounter);
 
@@ -805,7 +805,7 @@ public class AdminModule  {
                 auxVector[5] = numescritoriosAgencia.getText();
                 auxVector[6] = efectivoAgencia.getText();
                 auxVector[7] = numautoAgencia.getText();
-                auxVector[8] = numtransacAgencia.getText();
+                auxVector[8] = "0";
 
                 Data.addReg(auxVector, Data.AgenciasAutoMtx, Data.AgenciasAutoMtxCounter);
 
@@ -1005,7 +1005,7 @@ public class AdminModule  {
                 auxVector[1] = ubicacionCajero.getText();
                 auxVector[2] = efectivoCajero.getText();
                 auxVector[3] = (String)estadoCajero.getSelectedItem();
-                auxVector[4] = numtransCajero.getText();
+                auxVector[4] = "0";
 
                 Data.addReg(auxVector, Data.CajerosMtx, Data.CajerosMtxCounter);
 
@@ -1409,6 +1409,7 @@ public class AdminModule  {
         private Object[][] tableData = Data.ClientesMtx;
         private JTable tablaClientes =  new JTable(tableData,columnNames);
         String [] auxVector;
+        String [][] auxVector2;
         
         Paragraph column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11,column12;
         PdfPTable Tabla1;
@@ -1739,15 +1740,246 @@ public class AdminModule  {
                     } 
                     
                     break;
+                    
                 case"Top 3 Clientes con mas cuentas":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Clientes con mas cuentas">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Clientes con mas Cuentas",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Clientes con mas cuentas-------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Clientes3C");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Cantidad de Cuentas",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<3;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.ClientesMtx, Data.ClientesMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     break;
+                    
                 case"Top 3 Clientes con mas dinero":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Clientes con dinero">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Clientes con mas Dinero",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Clientes con mas dinero-------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Clientes3D");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Cantidad de Dinero",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<3;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.ClientesMtx, Data.ClientesMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    
                     break;
                 case"Top 3 Clientes con mas deudas":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Clientes con mas Deudas">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Clientes Deudores",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Clientes con mas Deudas------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Clientes3P");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Cantidad de Dinero Adeudado",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<3;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.ClientesMtx, Data.ClientesMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                    
                     break;
+                    
                 case"Top 3 Agencias mas Utilizadas":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Agencias mas Utilizadas">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Agencias mas Utilizadas",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Agencias mas Utilizadas-------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Agencias3T");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Cantidad de Transacciones",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<3;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.AgenciasMtx, Data.AgenciasMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     break;
                 case"Top 2 Operaciones en Call-Center":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 2 Operaciones en Call Center">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Operaciones en Call Center",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 2 Operaciones en Call Center-------------------------------
+                        Tabla1 = new PdfPTable(2);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 2"));
+                        titleCell.setColspan(2);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Call2O");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("Operacion",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Cantidad de Veces Realizada",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        
+                        for(int i=0;i<2;i++){
+                            Tabla1.addCell(auxVector2[0][i]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     break;
                 case"Sumatoria de efectivo en agencias":
                     
@@ -1830,10 +2062,10 @@ public class AdminModule  {
                         Report.add(Tabla1);
                     //-----------------------------FIN TABLA 1------------------------------
                     // ----------------------------TABLA 2 - Agencias Auto Banco------------
-                        Tabla1 = new PdfPTable(9);
+                        Tabla1 = new PdfPTable(3);
                         Tabla1.setWidthPercentage(100);
                         titleCell = new PdfPCell(new Paragraph("Agencias con AutoBanco"));
-                        titleCell.setColspan(9);
+                        titleCell.setColspan(3);
                         titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         Tabla1.addCell(titleCell);
@@ -1867,12 +2099,352 @@ public class AdminModule  {
                                        
                     break;
                 case"Listado de Empleados de cada Agencia":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Empleados en Agencia">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Empleados por Agencia",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Empleados -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("EmpleadosA");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    } 
+                    
                     break;
                 case"Listado de Empleados en Oficinas Centrales":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Clientes">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Empleados por Agencia",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Empleados-Gerencia -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Gerencia"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas1");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------
+                    // -----------------------------TABLA 2 - Empleados-Marketing -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Dep. Marketing"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas2");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 2------------------------------ 
+                    // -----------------------------TABLA 3 - Empleados-Informatica -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Dep. Informatica"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas3");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 3------------------------------ 
+                    // -----------------------------TABLA 4 - Empleados-Financiero -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Dep. Financiero"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas4");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 4------------------------------ 
+                    // -----------------------------TABLA 5 - Empleados-Reclamos -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Dep. Reclamos"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas5");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 5------------------------------ 
+                    // -----------------------------TABLA 6 - Empleados-Cobros -------------------------------
+                        Tabla1 = new PdfPTable(4);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Empleados en Gerencia"));
+                        titleCell.setColspan(4);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Area",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column4= new Paragraph("Sub-Area",FontFactory.getFont(FontFactory.HELVETICA,12));          
+                                
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        Tabla1.addCell(column4);
+                                                                                    
+                        auxVector2 = Data.getTops("Oficinas6");
+                       
+                        for(int i=0;i<Data.matrixCounter;i++){                           
+                            for(int j=0;j<auxVector2[0].length;j++){                               
+                                Tabla1.addCell(auxVector2[i][j]);                        
+                            }                            
+                        }
+                        Data.matrixCounter=0;
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 6------------------------------ 
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    } 
+                    
                     break;
                 case"Agencia con mayor numero de Empleados":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Clientes con mas Compras">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Agencia con mas Empleados",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Clientes con mas Compras------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("AgenciasE");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Cantidad de Empleados",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<1;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.AgenciasMtx, Data.AgenciasMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     break;
+                    
                 case"Top 3 Clientes con mas compras al credito":
+                    try{
+                    String path = rutaText.getText();
+                    path = (path.endsWith(".pdf"))?path:path+".pdf";
+                    FileOutputStream PDF = new FileOutputStream(path);
+                    Document Report = new Document();
+                    PdfWriter.getInstance(Report, PDF);
+                    //<editor-fold defaultstate="collapsed" desc="Creacion de PDF - Top 3 Clientes con mas Compras">
+                    Report.open();
+                    
+                        Report.add(new Paragraph("Top 3 Clientes Deudores",FontFactory.getFont(FontFactory.HELVETICA,20,BaseColor.BLUE)));
+                        Report.add(new Paragraph(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date())));
+                        Report.add(new Paragraph("-------------------------------------------------------------------------------------------"));
+                        
+                    // -----------------------------TABLA 1 - Top 3 Clientes con mas Compras------------------------------
+                        Tabla1 = new PdfPTable(3);
+                        Tabla1.setWidthPercentage(100);
+                        titleCell = new PdfPCell(new Paragraph("Top 3"));
+                        titleCell.setColspan(3);
+                        titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        titleCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        Tabla1.addCell(titleCell);
+                        auxVector2= Data.getTops("Clientes3CO");
+                    // COLUMNS NAMES
+                        column1= new Paragraph("ID",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column2= new Paragraph("Nombre",FontFactory.getFont(FontFactory.HELVETICA,12));
+                        column3= new Paragraph("Compras",FontFactory.getFont(FontFactory.HELVETICA,12));                             
+                        Tabla1.addCell(column1);
+                        Tabla1.addCell(column2);
+                        Tabla1.addCell(column3);
+                        
+                        for(int i=0;i<3;i++){
+                            auxVector=Data.readReg(auxVector2[0][i], Data.ClientesMtx, Data.ClientesMtxCounter);
+                            Tabla1.addCell(auxVector[0]);
+                            Tabla1.addCell(auxVector[1]);
+                            Tabla1.addCell(auxVector2[1][i]); 
+                        }
+                        Report.add(Tabla1);
+                    //-----------------------------FIN TABLA 1------------------------------                                                                     
+                    Report.close();
+                    JOptionPane.showMessageDialog(this, "Reporte PDF generado exitosamente");
+                    //</editor-fold>
+                    
+                    }                   
+                    catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
                     break;                   
                     
                 }

@@ -16,7 +16,7 @@ public class Data {
     static String [][] ClientesMtx = new String[50][9];
     static int ClientesMtxCounter=0;
     
-    static String [][] EmpleadosMtx =  new String[50][4]; 
+    static String [][] EmpleadosMtx =  new String[70][4]; 
     static int EmpleadosMtxCounter=0;
     
     static String [][] AgenciasMtx = new String[50][8];
@@ -67,6 +67,10 @@ public class Data {
     static String [][] oCallCenterMtx =  new String[50][7];
     static int oCallCenterMtxCounter=0;
     
+    static String[][] ComprasMtx = new String [50][2];
+    static int ComprasMtxCounter=0;
+    
+    static int matrixCounter=0;
      
     
     /**
@@ -478,7 +482,7 @@ public class Data {
             
                     if( ID.equals(Data.aPrestamosMtx[i][0])){
                         
-                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][4].replace(",",""));
+                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][3].replace(",",""));
                        break;
                     }
                 }
@@ -488,7 +492,7 @@ public class Data {
 
                 if( ID.equals(Data.aCreditoMtx[i][0])){
 
-                   saldo = Double.parseDouble(Data.aCreditoMtx[i][4].replace(",",""));
+                   saldo = Double.parseDouble(Data.aCreditoMtx[i][3].replace(",",""));
                    break;
                 }
             }
@@ -746,5 +750,431 @@ public class Data {
         
         return cheques;
     }
+    
+    /**
+     *
+     * @param type
+     * @return
+     */
+    public static String[][] getTops(String type){
+        
+        String temp,temp2;
+        String[] auxMatrix,auxMatrix2,auxMatrix3,auxMatrix4;
+        String[][] matrix=null;
+        double saldo=0;
+                
+        switch(type){
+            
+            case"Clientes3C":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Clientes con mas cuentas">
+                auxMatrix = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+                auxMatrix2 = new String[auxMatrix.length];
+                for(int j=0;j<auxMatrix.length;j++){                    
+                    auxMatrix2[j]=Integer.toString(Data.getIDs(auxMatrix[j], "TypeAH").length+Data.getIDs(auxMatrix[j], "TypeM").length);                   
+                }
+                matrix = new String[2][auxMatrix.length];
+                
+                for(int i=0;i<matrix[0].length;i++){
+                    matrix[0][i]=auxMatrix[i];
+                    matrix[1][i]=auxMatrix2[i];
+                }               
+                              
+                for(int i=0;i<matrix[0].length-1;i++){           
+                    for(int j=0;j<matrix[0].length-1;j++){
+                        if(Integer.parseInt(matrix[1][j])<Integer.parseInt(matrix[1][j+1])){                   
+                            temp=matrix[0][j];
+                            temp2=matrix[1][j];
+
+                            matrix[0][j]=matrix[0][j+1];
+                            matrix[1][j]=matrix[1][j+1];
+
+                            matrix[0][j+1]=temp;
+                            matrix[1][j+1]=temp2;                                
+                        }     
+                    }                      
+                }
+                //</editor-fold>
+                break;
+            case"Clientes3D":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Clientes con mas dinero">
+                auxMatrix = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+                auxMatrix2 = new String[auxMatrix.length];
+                
+                for(int j=0;j<auxMatrix.length;j++){
+                    saldo=0;
+                    auxMatrix3=Data.getIDs(auxMatrix[j], "TypeAH");
+                    for(int k=0;k<auxMatrix3.length;k++){
+                       saldo=saldo+Data.getSaldo(auxMatrix3[k], "TypeAH");
+                    }
+                    auxMatrix3=Data.getIDs(auxMatrix[j], "TypeM");
+                    for(int k=0;k<auxMatrix3.length;k++){
+                       saldo=saldo+Data.getSaldo(auxMatrix3[k], "TypeM");
+                    }
+                    auxMatrix2[j]=Double.toString(saldo);
+                }
+                matrix = new String[2][auxMatrix.length];
+
+                for(int i=0;i<matrix[0].length;i++){
+                    matrix[0][i]=auxMatrix[i];
+                    matrix[1][i]=auxMatrix2[i];
+                }
+                        
+                for(int i=0;i<matrix[0].length-1;i++){           
+                    for(int j=0;j<matrix[0].length-1;j++){
+                        if(Double.parseDouble(matrix[1][j])<Double.parseDouble(matrix[1][j+1])){                   
+                            temp=matrix[0][j];
+                            temp2=matrix[1][j];
+
+                            matrix[0][j]=matrix[0][j+1];
+                            matrix[1][j]=matrix[1][j+1];
+
+                            matrix[0][j+1]=temp;
+                            matrix[1][j+1]=temp2;                                
+                        }     
+                    }                      
+                }
+                //</editor-fold>
+                break;
+            case"Clientes3P":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Clientes con mas deudas">
+                auxMatrix = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+                auxMatrix2 = new String[auxMatrix.length];
+                
+                for(int j=0;j<auxMatrix.length;j++){
+                    saldo=0;
+                    auxMatrix3=Data.getIDs(auxMatrix[j], "TypeP");
+                    for(int k=0;k<auxMatrix3.length;k++){
+                       saldo=saldo+Data.getSaldo(auxMatrix3[k], "TypeP");
+                    }
+                    auxMatrix3=Data.getIDs(auxMatrix[j], "TypeCR");
+                    for(int k=0;k<auxMatrix3.length;k++){
+                       saldo=saldo+Data.getSaldo(auxMatrix3[k], "TypeCR");
+                    }
+                    auxMatrix2[j]=Double.toString(saldo);
+                }
+                matrix = new String[2][auxMatrix.length];
+
+                for(int i=0;i<matrix[0].length;i++){
+                    matrix[0][i]=auxMatrix[i];
+                    matrix[1][i]=auxMatrix2[i];
+                }
+                        
+                for(int i=0;i<matrix[0].length-1;i++){           
+                    for(int j=0;j<matrix[0].length-1;j++){
+                        if(Double.parseDouble(matrix[1][j])<Double.parseDouble(matrix[1][j+1])){                   
+                            temp=matrix[0][j];
+                            temp2=matrix[1][j];
+
+                            matrix[0][j]=matrix[0][j+1];
+                            matrix[1][j]=matrix[1][j+1];
+
+                            matrix[0][j+1]=temp;
+                            matrix[1][j+1]=temp2;                                
+                        }     
+                    }                      
+                }
+                //</editor-fold>
+                break;
+            case "Clientes3CO":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Agencias con mas Compras">
+                auxMatrix = Data.getColumn(Data.ComprasMtx,1,Data.ComprasMtxCounter);
+                auxMatrix2 = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+                matrix= new String[2][auxMatrix2.length];
+                                                 
+                    for(int i=0;i<auxMatrix2.length;i++){
+                        matrix[0][i]=auxMatrix2[i];                       
+                        matrix[1][i]=Integer.toString(0);                                                                                      
+                    }                                                          
+                
+
+                for(int i=0;i<auxMatrix.length;i++){
+                    
+                    for(int j=0;j<auxMatrix2.length;j++){
+
+                        if(auxMatrix[i]==auxMatrix2[j]){
+                            matrix[1][j]=Integer.toString(Integer.parseInt(matrix[1][j])+1);
+                        }                                                              
+                    }                                                          
+                }
+
+                for(int i=0;i<matrix[0].length-1;i++){
+
+                    for(int j=0;j<matrix[0].length-1;j++){
+                       if(Double.parseDouble(matrix[1][j])<Double.parseDouble(matrix[1][j+1])){ 
+
+                        temp=matrix[0][j];
+                        temp2=matrix[1][j];
+
+                        matrix[0][j]=matrix[0][j+1];
+                        matrix[1][j]=matrix[1][j+1];
+
+                        matrix[0][j+1]=temp;
+                        matrix[1][j+1]=temp2;              
+                       } 
+                    }
+                }
+                //</editor-fold>               
+                break;
+            case"Agencias3T":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Agencias con mas Transacciones">
+                auxMatrix = Data.getColumn(Data.AgenciasMtx,0,Data.AgenciasMtxCounter);
+                auxMatrix2 = Data.getColumn(Data.AgenciasMtx,7,Data.AgenciasMtxCounter);
+                matrix= new String[2][auxMatrix.length];
+
+                for(int i=0;i<matrix[0].length;i++){
+
+                    matrix[0][i]=auxMatrix[i];
+                    matrix[1][i]=auxMatrix2[i];
+
+                }
+
+                for(int i=0;i<matrix[0].length-1;i++){
+
+                    for(int j=0;j<matrix[0].length-1;j++){
+                       if(Double.parseDouble(matrix[1][j])<Double.parseDouble(matrix[1][j+1])){ 
+
+                        temp=matrix[0][j];
+                        temp2=matrix[1][j];
+
+                        matrix[0][j]=matrix[0][j+1];
+                        matrix[1][j]=matrix[1][j+1];
+
+                        matrix[0][j+1]=temp;
+                        matrix[1][j+1]=temp2;              
+                       } 
+                    }
+                }
+                //</editor-fold>
+                break;
+            case"Call2O":
+                //<editor-fold defaultstate="collapsed" desc="Top 2 Opereciones en Call Center">
+                String[] tiposvector ={"Transferencia","Pago de Servicios","Pago de Prestamo","Pago de Credito"};
+                auxMatrix2 = Data.getColumn(Data.oCallCenterMtx,6,Data.oCallCenterMtxCounter);
+                matrix= new String[2][4];
+                int cont1=0;
+                int cont2=0;
+                int cont3=0;
+                int cont4=0;
+                
+                for(int i=0;i<auxMatrix2.length;i++){
+                    
+                    switch(auxMatrix2[i]){
+                        case"Transferencia":  
+                            cont1=cont1+1;
+                            break;
+                        case "Pago de Servicios":
+                            cont2=cont2+1;
+                            break;
+                        case "Pago de Prestamo":
+                            cont3=cont3+1;
+                            break;
+                        case "Pago de Credito":
+                            cont4=cont4+1;
+                            break;
+                    }                    
+                }
+                for(int i=0;i<matrix[0].length;i++){
+                    matrix[0][i]=tiposvector[i];
+                    System.out.println(tiposvector[i]);
+                }
+                matrix[1][0]=Integer.toString(cont1);
+                matrix[1][1]=Integer.toString(cont2);
+                matrix[1][2]=Integer.toString(cont3);
+                matrix[1][3]=Integer.toString(cont4);
+                
+                for(int i=0;i<matrix[0].length-1;i++){
+            
+                    for(int j=0;j<matrix[0].length-1;j++){
+                       if(Integer.parseInt(matrix[1][j])<Integer.parseInt(matrix[1][j+1])){ 
+
+                        temp=matrix[0][j];
+                        temp2=matrix[1][j];
+
+                        matrix[0][j]=matrix[0][j+1];
+                        matrix[1][j]=matrix[1][j+1];
+
+                        matrix[0][j+1]=temp;
+                        matrix[1][j+1]=temp2;             
+                       } 
+                    }
+                }
+                //</editor-fold>
+                break;
+            case"EmpleadosA":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx, 0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Agencia Bancaria".equals(auxMatrix2[2])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas1":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Gerencia".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas2":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Departamento de Marketing".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas3":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Departamento de Informatica".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas4":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Departamento Financiero".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas5":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Departamento de Reclamos".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"Oficinas6":   
+                //<editor-fold defaultstate="collapsed" desc="Empleados">
+                auxMatrix=Data.getColumn(Data.EmpleadosMtx,0, Data.EmpleadosMtxCounter);
+                matrix=new String[Data.EmpleadosMtxCounter][4];
+                for(int i=0;i<Data.EmpleadosMtxCounter;i++){
+                    auxMatrix2=Data.readReg(auxMatrix[i], Data.EmpleadosMtx, Data.EmpleadosMtxCounter);
+                    if("Departamento de Cobros".equals(auxMatrix2[3])){
+                        Data.addReg(auxMatrix2, matrix, Data.matrixCounter);
+                        Data.matrixCounter++;
+                    }
+                }                
+                //</editor-fold>
+                break;
+            case"AgenciasE":
+                //<editor-fold defaultstate="collapsed" desc="Top 3 Agencias con mas Compras">
+                auxMatrix = Data.getColumn(Data.EmpleadosMtx,3,Data.EmpleadosMtxCounter);
+                auxMatrix2 = Data.getColumn(Data.AgenciasMtx,0,Data.AgenciasMtxCounter);
+                matrix= new String[2][auxMatrix2.length];
+                                                 
+                for(int i=0;i<auxMatrix2.length;i++){
+                    matrix[0][i]=auxMatrix2[i];                       
+                    matrix[1][i]=Integer.toString(0);                                                                                      
+                }                                                          
+                
+
+                for(int i=0;i<auxMatrix.length;i++){
+                    
+                    for(int j=0;j<auxMatrix2.length;j++){
+
+                        if(auxMatrix[i].equals(auxMatrix2[j])){
+                            matrix[1][j]=Integer.toString(Integer.parseInt(matrix[1][j])+1);
+                        }                                                              
+                    }                                                          
+                }
+
+                for(int i=0;i<matrix[0].length-1;i++){
+
+                    for(int j=0;j<matrix[0].length-1;j++){
+                       if(Double.parseDouble(matrix[1][j])<Double.parseDouble(matrix[1][j+1])){ 
+
+                        temp=matrix[0][j];
+                        temp2=matrix[1][j];
+
+                        matrix[0][j]=matrix[0][j+1];
+                        matrix[1][j]=matrix[1][j+1];
+
+                        matrix[0][j+1]=temp;
+                        matrix[1][j+1]=temp2;              
+                       } 
+                    }
+                }
+                //</editor-fold>
+                break;
+        }		         
+        
+	//<editor-fold>	
+//        auxMatrix = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+//        auxMatrix2 = Data.getColumn(Data.ClientesMtx,0,Data.ClientesMtxCounter);
+//        matrix= new String[2][auxMatrix.length];
+//
+//
+//        for(int i=0;i<matrix.length;i++){
+//
+//            matrix[0][i]=auxMatrix[i];
+//            matrix[1][0]=auxMatrix2[i];
+//
+//        }
+//        
+//        for(int i=0;i<matrix[0].length-1;i++){
+//            
+//            for(int j=0;j<matrix[0].length-1;j++){
+//               if(Double.parseDouble(matrix[0][j])<Double.parseDouble(matrix[0][j+1])){ 
+//                   
+//                temp=matrix[0][j];
+//                temp2=matrix[1][j];
+//                
+//                matrix[0][j]=matrix[0][j+1];
+//                matrix[1][j]=matrix[1][j+1];
+//                
+//                matrix[0][j+1]=temp;
+//                matrix[1][j+1]=temp2;              
+//                   
+//               } 
+//            }
+//                       
+//        }
+        //</editor-fold>
+        for(int i=0;i<matrix.length;i++){           
+            for(int j=0;j<matrix[0].length;j++){
+                System.out.print(matrix[i][j]+" ");
+            }
+            System.out.println("");
+        }
+        
+        return matrix;
+
+    }
+
 
 }
