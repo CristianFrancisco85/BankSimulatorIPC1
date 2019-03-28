@@ -10,7 +10,7 @@ import javax.swing.text.MaskFormatter;
  */
 
 
-public class Data {
+public abstract class Data {
     
     //Matrices
     static String [][] ClientesMtx = new String[50][9];

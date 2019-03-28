@@ -1276,8 +1276,8 @@ public class AdminModule  {
             title2.setText("Aprobadas");
             tablaCreditos.addMouseListener(this);
             this.add(new JScrollPane(tablaCreditos),BorderLayout.CENTER);
-            //this.add(new JScrollPane(tablaCreditos2),BorderLayout.CENTER);
-            //this.add(title2,BorderLayout.AFTER_LINE_ENDS);            
+            this.add(new JScrollPane(tablaCreditos2),BorderLayout.CENTER);
+            this.add(title2,BorderLayout.AFTER_LINE_ENDS);            
         }
 
         @Override
@@ -1345,8 +1345,8 @@ public class AdminModule  {
       
             tablaPrestamos.addMouseListener(this);
             this.add(new JScrollPane(tablaPrestamos),BorderLayout.CENTER);
-            //this.add(new JScrollPane(tablaPrestamos2),BorderLayout.CENTER);
-            //this.add(title2,BorderLayout.AFTER_LINE_ENDS);
+            this.add(new JScrollPane(tablaPrestamos2),BorderLayout.CENTER);
+            this.add(title2,BorderLayout.AFTER_LINE_ENDS);
         }
 
         @Override
@@ -2004,7 +2004,7 @@ public class AdminModule  {
                         auxVector=Data.getColumn(Data.AgenciasAutoMtx, 6, Data.AgenciasAutoMtxCounter);
                         double total2=0;
                         for(int i=0;i<auxVector.length;i++){
-                            total=Double.parseDouble(auxVector[i].replace(",", ""))+total;
+                            total2=Double.parseDouble(auxVector[i].replace(",", ""))+total2;
                         }
                         
                         Report.add(new Paragraph("Agencias: TOTAL= "+total,FontFactory.getFont(FontFactory.HELVETICA,15,BaseColor.BLACK)));

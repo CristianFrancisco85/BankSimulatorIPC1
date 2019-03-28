@@ -23,10 +23,10 @@ public class Main {
         String [] Cuenta3Cl1= {"111","1","26/03/19","3000","25"};
         String [] Cuenta4Cl1= {"112","1","26/03/19","4000","25"};
         Data.addReg(Cliente1, Data.ClientesMtx, Data.ClientesMtxCounter);
-        Data.cAhorroMtxCounter++;
         Data.addReg(Cuenta1Cl1, Data.cAhorroMtx, Data.cAhorroMtxCounter);
         Data.cAhorroMtxCounter++;
         Data.addReg(Cuenta2Cl1, Data.cAhorroMtx, Data.cAhorroMtxCounter);
+        Data.cAhorroMtxCounter++;
         Data.addReg(Cuenta3Cl1, Data.cMonetariaMtx, Data.cMonetariaMtxCounter);
         Data.cMonetariaMtxCounter++;
         Data.addReg(Cuenta4Cl1, Data.cMonetariaMtx, Data.cMonetariaMtxCounter);
@@ -35,7 +35,7 @@ public class Main {
         
         
         
-        String [] Cliente2 = {"2","Manuel","Zona 2","2200-0022","N/A,N/A","221,222","","","0"};
+        String [] Cliente2 = {"2","Manuel","Zona 2","2200-0022","201,202","221,222","","","0"};
         String [] Cuenta1Cl2= {"201","2","26/03/19","5000","25"};
         String [] Cuenta2Cl2= {"202","2","26/03/19","6000","25"};
         String [] Cuenta3Cl2= {"221","2","26/03/19","7000","25"};
@@ -49,6 +49,7 @@ public class Main {
         Data.cMonetariaMtxCounter++;
         Data.addReg(Cuenta4Cl2, Data.cMonetariaMtx, Data.cMonetariaMtxCounter);
         Data.cMonetariaMtxCounter++;
+        Data.ClientesMtxCounter++;
 
         
         String [] Cliente3 = {"3","Roberto","Zona 3","3300-0033","301,302","331,332","","","0"};

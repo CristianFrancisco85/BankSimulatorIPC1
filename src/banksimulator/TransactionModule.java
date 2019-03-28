@@ -121,6 +121,8 @@ public  class TransactionModule implements MouseListener{
                     Window.TabbedPane.addTab("Transferencias", new Transferencias("Single",IDCliente,"TypeX"));
                     Window.setVisible(true);
                 break;
+                default:
+                break;
 
             }            
             this.TransactionFrame.revalidate();
@@ -2238,9 +2240,11 @@ public  class TransactionModule implements MouseListener{
                    
                    if(ahorroRbtn.isSelected()){
                         Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                    }
                    else{
                         Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                        JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                    }
                    
                 }
@@ -2257,9 +2261,11 @@ public  class TransactionModule implements MouseListener{
                 JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 if(ahorroRbtn.isSelected()){
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else{
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 
             }
@@ -2272,9 +2278,11 @@ public  class TransactionModule implements MouseListener{
                 JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 if(ahorroRbtn.isSelected()){
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else if(monetariaRbtn.isSelected()){
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else{
                 JOptionPane.showMessageDialog(null,"Seleccione un tipo de metodo de Pago", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2290,9 +2298,11 @@ public  class TransactionModule implements MouseListener{
                 JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 if(ahorroRbtn.isSelected()){
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeAH", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else if(monetariaRbtn.isSelected()){
                      Data.makeDebito((String)cuentaOr.getSelectedItem(),"TypeM", Double.parseDouble(monto.getText().replace(",","")));
+                     JOptionPane.showMessageDialog(null,"Operacion Exitosa", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else{
                 JOptionPane.showMessageDialog(null,"Seleccione un metodo de Pago", "Error", JOptionPane.ERROR_MESSAGE);

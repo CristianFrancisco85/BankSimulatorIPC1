@@ -57,6 +57,7 @@ public class MainFrame extends JFrame  {
         //Configuracion Boton "Compras"
         saleBtn = this.newBtn("Compras");
         saleBtn.setToolTipText("Simular Compra");
+        saleBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/buy.png")));
         saleBtn.addActionListener(new saleBtn());
         SideMenu.add(saleBtn);
         
@@ -95,7 +96,7 @@ public class MainFrame extends JFrame  {
                Administrator.AdminFrame.show();        
                transBtn.setBackground(new java.awt.Color(17, 120, 204));
                saleBtn.setBackground(new java.awt.Color(17, 120, 204));
-
+               
                Transaction.TransactionFrame.dispose();
                ComprasFrame.dispose();
 
