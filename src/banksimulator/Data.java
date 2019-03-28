@@ -581,8 +581,8 @@ public abstract class Data {
                 for(int i=0; i<50;i++){
             
                     if( ID.equals(Data.aPrestamosMtx[i][0])){                       
-                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][3].replace(",",""));
-                       Data.aPrestamosMtx[i][3]=Double.toString(saldo-monto);
+                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][4].replace(",",""));
+                       Data.aPrestamosMtx[i][4]=Double.toString(saldo-monto);
                        break;
                     }
                 }
@@ -592,8 +592,8 @@ public abstract class Data {
             for(int i=0; i<50;i++){
 
                 if( ID.equals(Data.aCreditoMtx[i][0])){                       
-                   saldo = Double.parseDouble(Data.aCreditoMtx[i][3].replace(",",""));
-                   Data.aCreditoMtx[i][3]=Double.toString(saldo-monto);
+                   saldo = Double.parseDouble(Data.aCreditoMtx[i][4].replace(",",""));
+                   Data.aCreditoMtx[i][4]=Double.toString(saldo-monto);
                    break;
                 }
             }
@@ -683,8 +683,8 @@ public abstract class Data {
                 for(int i=0; i<50;i++){
             
                     if( ID.equals(Data.aPrestamosMtx[i][0])){                       
-                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][3].replace(",",""));
-                       Data.aPrestamosMtx[i][3]=Double.toString(saldo+monto);
+                       saldo = Double.parseDouble(Data.aPrestamosMtx[i][4].replace(",",""));
+                       Data.aPrestamosMtx[i][4]=Double.toString(saldo+monto);
                        break;
                     }
                 }
@@ -694,8 +694,8 @@ public abstract class Data {
             for(int i=0; i<50;i++){
 
                 if( ID.equals(Data.aCreditoMtx[i][0])){                       
-                   saldo = Double.parseDouble(Data.aCreditoMtx[i][3].replace(",",""));
-                   Data.aCreditoMtx[i][3]=Double.toString(saldo+monto);
+                   saldo = Double.parseDouble(Data.aCreditoMtx[i][4].replace(",",""));
+                   Data.aCreditoMtx[i][4]=Double.toString(saldo+monto);
                    break;
                 }
             }

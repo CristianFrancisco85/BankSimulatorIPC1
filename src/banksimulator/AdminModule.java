@@ -1272,7 +1272,7 @@ public class AdminModule  {
         
         TarjetaCreditoPanel(){
             title.setText("Solicitudes");
-            //this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
+            this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
             title2.setText("Aprobadas");
             tablaCreditos.addMouseListener(this);
             this.add(new JScrollPane(tablaCreditos),BorderLayout.CENTER);
@@ -1340,7 +1340,7 @@ public class AdminModule  {
         
         PrestamosPanel(){
             title.setText("Solicitudes");
-            //this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
+            this.add(title,BorderLayout.BEFORE_LINE_BEGINS);
             title2.setText("Aprobadas");
       
             tablaPrestamos.addMouseListener(this);
